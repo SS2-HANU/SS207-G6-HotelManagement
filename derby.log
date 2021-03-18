@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Thu Mar 18 13:33:53 ICT 2021:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.8.3.0 - (1405108): instance a816c00e-0178-440a-5caf-000006c32000 
+on database directory /home/minh/HotelManagement/data/domainds  with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@659e0bfd 
+Loaded from file:/home/minh/dev/school/SS2/domainapptool_20201217_5.4%20(1)/derby.jar
+java.vendor=Oracle Corporation
+java.runtime.version=15.0.2+7-27
+user.dir=/home/minh/HotelManagement
+os.name=Linux
+os.arch=amd64
+os.version=4.19.0-14-amd64
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''
