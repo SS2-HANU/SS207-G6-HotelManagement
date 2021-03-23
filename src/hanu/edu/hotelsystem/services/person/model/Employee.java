@@ -6,10 +6,12 @@ import domainapp.basics.model.meta.DAssoc;
 import domainapp.basics.model.meta.DAttr;
 import domainapp.basics.model.meta.DClass;
 import domainapp.basics.model.meta.DOpt;
+import domainapp.basics.model.meta.Select;
 import domainapp.basics.util.Tuple;
 import hanu.edu.hotelsystem.services.AccompaniedServiceOrder.model.AccompaniedServiceOrder;
 import hanu.edu.hotelsystem.services.Department.model.Department;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Objects;
@@ -21,7 +23,7 @@ public class Employee extends Person {
     public static final String E_salary = "salary";
 
 
-    @DAttr(name = E_code, id = true, type = DAttr.Type.String, auto = true, length = 6,
+    @DAttr(name = E_code, type = DAttr.Type.String, auto = true, length = 6,
             mutable = false, optional = false)
     private String code;
 
@@ -40,6 +42,9 @@ public class Employee extends Person {
             associate=@DAssoc.Associate(type= Department.class,cardMin=1,cardMax=1))
     private Department department;
 
+    @DAttr(name="service-order",type= DAttr.Type.Collection,
+            serialisable=false,optional=false,
+            filter=@Select(clazz= AccompaniedServiceOrder.class))
     @DAssoc(ascName="employee-manages-service-order",role="employee",
             ascType= DAssoc.AssocType.One2Many,endType= DAssoc.AssocEndType.One,
             associate=@DAssoc.Associate(type=AccompaniedServiceOrder.class,
@@ -80,6 +85,9 @@ public class Employee extends Person {
         setEmail(email);
         setSalary(salary);
         setDepartment(department);
+
+        orders = new ArrayList<>();
+        orderCount = 0;
     }
 
     public String getCode() {
@@ -268,4 +276,5 @@ public class Employee extends Person {
             }
         }
     }
+
 }

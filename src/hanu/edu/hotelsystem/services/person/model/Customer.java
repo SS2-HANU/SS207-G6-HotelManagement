@@ -18,7 +18,7 @@ import java.util.Objects;
 public class Customer extends Person{
     public static final String C_code = "code";
 
-    @DAttr(name = C_code, id = true, type = DAttr.Type.String, auto = true, length = 6,
+    @DAttr(name = C_code, type = DAttr.Type.String, auto = true, length = 6,
             mutable = false, optional = false)
     private String code;
     private static int counter;
@@ -29,7 +29,7 @@ public class Customer extends Person{
     @DAssoc(ascName="customer-has-reservation",role="customer",
             ascType= DAssoc.AssocType.One2Many,endType= DAssoc.AssocEndType.One,
             associate=@DAssoc.Associate(type=Reservation.class,
-                    cardMin=1,cardMax=25))
+                    cardMin=0,cardMax=25))
     private Collection<Reservation> reservations;
     
     private int reservationsCount;
@@ -100,7 +100,7 @@ public class Customer extends Person{
     }
 
     @DOpt(type=DOpt.Type.LinkAdderNew)
-    public boolean addNewreservation(Reservation r) {
+    public boolean addNewReservation(Reservation r) {
         reservations.add(r);
         reservationsCount++;
 
@@ -109,7 +109,7 @@ public class Customer extends Person{
     }
 
     @DOpt(type=DOpt.Type.LinkAdder)
-    public boolean addreservation(Collection<Reservation> reservations) {
+    public boolean addReservation(Collection<Reservation> reservations) {
         for (Reservation r : reservations) {
             if (!this.reservations.contains(r)) {
                 this.reservations.add(r);
@@ -163,6 +163,11 @@ public class Customer extends Person{
         reservationsCount = count;
     }
 
+    public String getCode() {
+        return code;
+    }
 
-
+    public Collection<Reservation> getReservations() {
+        return reservations;
+    }
 }

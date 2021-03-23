@@ -2,7 +2,12 @@ package hanu.edu.hotelsystem.software;
 
 import domainapp.software.SoftwareFactory;
 import domainapp.softwareimpl.DomSoftware;
+import hanu.edu.hotelsystem.services.AccompaniedService.model.AccompaniedService;
+import hanu.edu.hotelsystem.services.AccompaniedServiceOrder.model.AccompaniedServiceOrder;
 import hanu.edu.hotelsystem.services.Department.model.Department;
+import hanu.edu.hotelsystem.services.Reservation.model.Reservation;
+import hanu.edu.hotelsystem.services.Room.model.Room;
+import hanu.edu.hotelsystem.services.RoomOrder.model.RoomOrder;
 import hanu.edu.hotelsystem.services.person.model.Address;
 import hanu.edu.hotelsystem.services.person.model.Customer;
 import hanu.edu.hotelsystem.services.person.model.Employee;
@@ -28,7 +33,12 @@ public class Main {
             Employee.class,
             Department.class,
             Address.class,
-            Customer.class
+            Customer.class,
+            AccompaniedService.class,
+            AccompaniedServiceOrder.class,
+            Reservation.class,
+            RoomOrder.class,
+            Room.class
     };
     
     // 2. create UI software

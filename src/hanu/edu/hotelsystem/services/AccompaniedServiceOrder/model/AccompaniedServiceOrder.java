@@ -11,6 +11,8 @@ import hanu.edu.hotelsystem.services.AccompaniedService.model.AccompaniedService
 import hanu.edu.hotelsystem.services.Reservation.model.Reservation;
 import hanu.edu.hotelsystem.services.person.model.Employee;
 
+import java.util.Objects;
+
 
 @DClass(schema = "hotelsystem")
 public class AccompaniedServiceOrder {
@@ -69,4 +71,54 @@ public class AccompaniedServiceOrder {
         }
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public Reservation getReservation() {
+        return reservation;
+    }
+
+    public void setReservation(Reservation reservation) {
+        this.reservation = reservation;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
+    public AccompaniedService getService() {
+        return service;
+    }
+
+    public void setService(AccompaniedService service) {
+        this.service = service;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AccompaniedServiceOrder that = (AccompaniedServiceOrder) o;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "AccompaniedServiceOrder{" +
+                "id=" + id +
+                ", reservation=" + reservation +
+                ", employee=" + employee +
+                ", service=" + service +
+                '}';
+    }
 }

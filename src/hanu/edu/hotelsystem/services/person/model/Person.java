@@ -33,7 +33,7 @@ public abstract class Person {
     @DAttr(name = A_gender, type = DAttr.Type.Domain, length = 10, optional = false)
     private Gender gender;
 
-    @DAttr(name = A_dob, type = DAttr.Type.Date, length = 15, optional = false)
+    @DAttr(name = A_dob, type = DAttr.Type.Date, length = 15, optional = false, format= DAttr.Format.Date)
     private Date dob;
 
     @DAttr(name = A_address, type = DAttr.Type.Domain, length = 20, optional = false)

@@ -9,6 +9,8 @@ import domainapp.basics.model.meta.DOpt;
 import hanu.edu.hotelsystem.services.Room.model.Room;
 import hanu.edu.hotelsystem.services.Reservation.model.Reservation;
 
+import java.util.Objects;
+
 
 @DClass(schema = "hotelsystem")
 public class RoomOrder {
@@ -31,18 +33,24 @@ public class RoomOrder {
             associate=@DAssoc.Associate(type= Room.class,cardMin=1,cardMax=1))
     private Room room;
 
+    @DAttr(name = "price", type = DAttr.Type.Long, optional = false)
+    private Long price;
+
     @DOpt(type=DOpt.Type.ObjectFormConstructor)
     public RoomOrder(@AttrRef("reservation") Reservation reservation,
+                                   @AttrRef("price") Long price,
                                    @AttrRef("room") Room room){
-        this(null, reservation, room);
+        this(null, reservation,price, room);
     }
 
     @DOpt(type=DOpt.Type.DataSourceConstructor)
     public RoomOrder(@AttrRef("id") Integer id,
-                                   @AttrRef("reservation") Reservation reservation,
-                                  @AttrRef("room") Room room) throws ConstraintViolationException {
+                     @AttrRef("reservation") Reservation reservation,
+                     @AttrRef("price") Long price,
+                     @AttrRef("room") Room room) throws ConstraintViolationException {
         this.id = nextId(id);
         this.reservation= reservation;
+        this.price = price;
         this.room = room;
     }
 
@@ -59,4 +67,54 @@ public class RoomOrder {
         }
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public Reservation getReservation() {
+        return reservation;
+    }
+
+    public void setReservation(Reservation reservation) {
+        this.reservation = reservation;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
+    }
+
+    public Long getPrice() {
+        return price;
+    }
+
+    public void setPrice(Long price) {
+        this.price = price;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RoomOrder roomOrder = (RoomOrder) o;
+        return id == roomOrder.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "RoomOrder{" +
+                "id=" + id +
+                ", reservation=" + reservation +
+                ", room=" + room +
+                ", price=" + price +
+                '}';
+    }
 }

@@ -11,6 +11,7 @@ import domainapp.basics.util.Tuple;
 
 import hanu.edu.hotelsystem.services.RoomOrder.model.RoomOrder;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -39,31 +40,19 @@ public class Room {
     @DAttr(name = R_floor, type = DAttr.Type.Integer, optional = false, min = 1, max = 10)
     private Integer floorNum;
 
-    @DAttr(name = R_price, type = DAttr.Type.Long, optional = false)
-    private Long price;
-
     @DAttr(name = R_type, type = DAttr.Type.Domain, length = 10, optional = false)
     private RoomType roomType;
 
-    @DAttr(name="room",type= DAttr.Type.Collection,
+    @DAttr(name="room-order",type= DAttr.Type.Collection,
             serialisable=false,optional=false,
             filter=@Select(clazz= RoomOrder.class))
     @DAssoc(ascName="room-has-room-order",role="room",
             ascType= DAssoc.AssocType.One2Many,endType= DAssoc.AssocEndType.One,
             associate=@DAssoc.Associate(type=RoomOrder.class,
-                    cardMin=1,cardMax=25))
+                    cardMin=0,cardMax=25))
     private Collection<RoomOrder> roomOrders;
 
     private int roomOrderCount;
-
-
-//    @DAttr(name = "reservations", type = DAttr.Type.Collection,
-//            serialisable = false, optional = false,
-//            filter = @Select(clazz = Reservation.class))
-//    @DAssoc(ascName = "room-has-reservations", role = "room",
-//            ascType = DAssoc.AssocType.One2Many, endType = DAssoc.AssocEndType.One,
-//            associate = @DAssoc.Associate(type = Reservation.class, cardMin = 1, cardMax = MetaConstants.CARD_MORE))
-//    private Collection<Reservation> reservations ;
 
     private static final Map<Tuple, Integer> currNums = new LinkedHashMap<>();
 
@@ -71,9 +60,8 @@ public class Room {
     @DOpt(type=DOpt.Type.RequiredConstructor)
     public Room(
             @AttrRef("floorNum") Integer floorNum,
-            @AttrRef("price") Long price,
             @AttrRef("roomType") RoomType roomType) throws ConstraintViolationException{
-        this(null, null, floorNum, price, roomType );
+        this(null, null, floorNum, roomType );
     }
 
     @DOpt(type = DOpt.Type.DataSourceConstructor)
@@ -81,15 +69,16 @@ public class Room {
             @AttrRef("id") Integer id,
             @AttrRef("name") String name,
             @AttrRef("floorNum") Integer floorNum,
-            @AttrRef("price") Long price,
             @AttrRef("roomType") RoomType roomType
     ) throws ConstraintViolationException {
         this.id = nextId(id);
         this.name = nextName(name, floorNum);
 
         setFloorNum(floorNum);
-        setPrice(price);
         setRoomType(roomType);
+
+        roomOrders = new ArrayList<>();
+        roomOrderCount = 0;
 
     }
 
@@ -177,15 +166,6 @@ public class Room {
 
     public int getId() {
         return id;
-    }
-
-
-    public Long getPrice() {
-        return price;
-    }
-
-    public void setPrice(Long price) {
-        this.price = price;
     }
 
     public int getFloorNum() {
@@ -292,7 +272,6 @@ public class Room {
     public String toString() {
         return "Room{" +
                 "id=" + id +
-                ", price=" + price +
                 ", floorNum=" + floorNum +
                 ", name='" + name +
                 ", roomType=" + roomType +

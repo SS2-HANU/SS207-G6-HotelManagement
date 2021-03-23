@@ -8,6 +8,7 @@ import domainapp.basics.model.meta.DOpt;
 import domainapp.basics.model.meta.Select;
 import hanu.edu.hotelsystem.services.AccompaniedServiceOrder.model.AccompaniedServiceOrder;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -49,6 +50,9 @@ public class AccompaniedService {
         this.id = nextID(id);
         setName(name);
         setPrice(price);
+
+        orders = new ArrayList<>();
+        orderCount = 0;
     }
 
     public int getId() {
