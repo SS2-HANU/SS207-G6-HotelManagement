@@ -43,7 +43,7 @@ public class Room {
     @DAttr(name = R_type, type = DAttr.Type.Domain, length = 10, optional = false)
     private RoomType roomType;
 
-    @DAttr(name="room-order",type= DAttr.Type.Collection,
+    @DAttr(name="roomOrders",type= DAttr.Type.Collection,
             serialisable=false,optional=false,
             filter=@Select(clazz= RoomOrder.class))
     @DAssoc(ascName="room-has-room-order",role="room",

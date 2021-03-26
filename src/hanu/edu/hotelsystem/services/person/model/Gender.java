@@ -3,8 +3,10 @@ package hanu.edu.hotelsystem.services.person.model;
 import domainapp.basics.model.meta.DAttr;
 
 /**
- * @overview Represents the gender of a person.
- *
+ * @overview Represents gender of a person
+
+ * @author nguyen minh chau
+ * @version 1.0
  */
 public enum Gender {
     Male,

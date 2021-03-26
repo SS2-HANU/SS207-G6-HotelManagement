@@ -42,14 +42,14 @@ public class Employee extends Person {
             associate=@DAssoc.Associate(type= Department.class,cardMin=1,cardMax=1))
     private Department department;
 
-    @DAttr(name="service-order",type= DAttr.Type.Collection,
+    @DAttr(name="serviceOrders",type= DAttr.Type.Collection,
             serialisable=false,optional=false,
             filter=@Select(clazz= AccompaniedServiceOrder.class))
     @DAssoc(ascName="employee-manages-service-order",role="employee",
             ascType= DAssoc.AssocType.One2Many,endType= DAssoc.AssocEndType.One,
             associate=@DAssoc.Associate(type=AccompaniedServiceOrder.class,
                     cardMin=0,cardMax=25))
-    private Collection<AccompaniedServiceOrder> orders;
+    private Collection<AccompaniedServiceOrder> serviceOrders;
 
     private int orderCount;
 
@@ -86,7 +86,7 @@ public class Employee extends Person {
         setSalary(salary);
         setDepartment(department);
 
-        orders = new ArrayList<>();
+        serviceOrders = new ArrayList<>();
         orderCount = 0;
     }
 
@@ -124,8 +124,8 @@ public class Employee extends Person {
 
     @DOpt(type=DOpt.Type.LinkAdder)
     public boolean addAccompaniedServiceOrder(AccompaniedServiceOrder order) {
-        if (!this.orders.contains(order)) {
-            orders.add(order);
+        if (!this.serviceOrders.contains(order)) {
+            serviceOrders.add(order);
         }
 
         // no other attributes changed
@@ -134,7 +134,7 @@ public class Employee extends Person {
 
     @DOpt(type=DOpt.Type.LinkAdderNew)
     public boolean addNewAccompaniedServiceOrder(AccompaniedServiceOrder order) {
-        orders.add(order);
+        serviceOrders.add(order);
         orderCount++;
         // no other attributes changed
         return false;
@@ -143,8 +143,8 @@ public class Employee extends Person {
     @DOpt(type=DOpt.Type.LinkAdder)
     public boolean addAccompaniedServiceOrder(Collection<AccompaniedServiceOrder> orders) {
         for (AccompaniedServiceOrder o : orders) {
-            if (!this.orders.contains(o)) {
-                this.orders.add(o);
+            if (!this.serviceOrders.contains(o)) {
+                this.serviceOrders.add(o);
             }
         }
 
@@ -154,7 +154,7 @@ public class Employee extends Person {
 
     @DOpt(type=DOpt.Type.LinkAdderNew)
     public boolean addNewAccompaniedServiceOrder(Collection<AccompaniedServiceOrder> orders) {
-        this.orders.addAll(orders);
+        this.serviceOrders.addAll(orders);
         orderCount += orders.size();
 
         // no other attributes changed
@@ -164,7 +164,7 @@ public class Employee extends Person {
     @DOpt(type=DOpt.Type.LinkRemover)
     //only need to do this for reflexive association: @MemberRef(name="students")
     public boolean removeAccompaniedServiceOrder(AccompaniedServiceOrder o) {
-        boolean removed = orders.remove(o);
+        boolean removed = serviceOrders.remove(o);
 
         if (removed) {
             orderCount--;
@@ -176,7 +176,7 @@ public class Employee extends Person {
 
     @DOpt(type=DOpt.Type.Setter)
     public void setAccompaniedServiceOrder(Collection<AccompaniedServiceOrder> orders) {
-        this.orders = orders;
+        this.serviceOrders = orders;
 
         orderCount = orders.size();
     }
@@ -197,7 +197,7 @@ public class Employee extends Person {
 
     @DOpt(type=DOpt.Type.Getter)
     public Collection<AccompaniedServiceOrder> getAccompaniedServiceOrders() {
-        return orders;
+        return serviceOrders;
     }
 
     @Override
@@ -236,10 +236,7 @@ public class Employee extends Person {
 
     private String nextCode(String code) throws ConstraintViolationException {
         if (code == null) { // generate a new id
-            if (counter == 0) {
-                counter++;
-            }
-            return "E" + counter;
+            return "E" + ++counter;
         } else {
             // update id
             int num;

@@ -14,6 +14,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
+/**
+ * Represents a department. The department ID is auto-incremented from 0
+ *
+ *
+ * @author nguyen minh chau
+ * @version 1.0
+ */
+
 @DClass(schema = "hotelsystem")
 public class Department {
 

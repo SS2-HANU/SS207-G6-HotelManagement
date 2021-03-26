@@ -23,7 +23,7 @@ public class Customer extends Person{
     private String code;
     private static int counter;
 
-    @DAttr(name="reservation",type= DAttr.Type.Collection,
+    @DAttr(name="reservations",type= DAttr.Type.Collection,
             serialisable=false,optional=false,
             filter=@Select(clazz= Reservation.class))
     @DAssoc(ascName="customer-has-reservation",role="customer",

@@ -12,6 +12,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
+/**
+ * @overview Represents an accompanied service. The service ID is auto-incremented from 0
+
+ * @author nguyen minh chau
+ * @version 2.0
+ */
+
 @DClass(schema = "hotelsystem")
 public class AccompaniedService {
 
@@ -25,14 +32,14 @@ public class AccompaniedService {
     @DAttr(name = "price", type = DAttr.Type.Long, optional = false)
     private Long price;
 
-    @DAttr(name="service-order",type= DAttr.Type.Collection,
+    @DAttr(name="serviceOrders",type= DAttr.Type.Collection,
             serialisable=false,optional=false,
             filter=@Select(clazz= AccompaniedServiceOrder.class))
     @DAssoc(ascName="service-has-service-order",role="service",
             ascType= DAssoc.AssocType.One2Many,endType= DAssoc.AssocEndType.One,
             associate=@DAssoc.Associate(type=AccompaniedServiceOrder.class,
                     cardMin=1,cardMax=25))
-    private Collection<AccompaniedServiceOrder> orders;
+    private Collection<AccompaniedServiceOrder> serviceOrders;
 
     private int orderCount;
 
@@ -51,7 +58,7 @@ public class AccompaniedService {
         setName(name);
         setPrice(price);
 
-        orders = new ArrayList<>();
+        serviceOrders = new ArrayList<>();
         orderCount = 0;
     }
 
@@ -76,8 +83,8 @@ public class AccompaniedService {
     }
     @DOpt(type=DOpt.Type.LinkAdder)
     public boolean addAccompaniedServiceOrder(AccompaniedServiceOrder order) {
-        if (!this.orders.contains(order)) {
-            orders.add(order);
+        if (!this.serviceOrders.contains(order)) {
+            serviceOrders.add(order);
         }
 
         // no other attributes changed
@@ -86,7 +93,7 @@ public class AccompaniedService {
 
     @DOpt(type=DOpt.Type.LinkAdderNew)
     public boolean addNewAccompaniedServiceOrder(AccompaniedServiceOrder order) {
-        orders.add(order);
+        serviceOrders.add(order);
         orderCount++;
         // no other attributes changed
         return false;
@@ -95,8 +102,8 @@ public class AccompaniedService {
     @DOpt(type=DOpt.Type.LinkAdder)
     public boolean addAccompaniedServiceOrder(Collection<AccompaniedServiceOrder> orders) {
         for (AccompaniedServiceOrder o : orders) {
-            if (!this.orders.contains(o)) {
-                this.orders.add(o);
+            if (!this.serviceOrders.contains(o)) {
+                this.serviceOrders.add(o);
             }
         }
 
@@ -106,7 +113,7 @@ public class AccompaniedService {
 
     @DOpt(type=DOpt.Type.LinkAdderNew)
     public boolean addNewAccompaniedServiceOrder(Collection<AccompaniedServiceOrder> orders) {
-        this.orders.addAll(orders);
+        this.serviceOrders.addAll(orders);
         orderCount += orders.size();
 
         // no other attributes changed
@@ -116,7 +123,7 @@ public class AccompaniedService {
     @DOpt(type=DOpt.Type.LinkRemover)
     //only need to do this for reflexive association: @MemberRef(name="students")
     public boolean removeAccompaniedServiceOrder(AccompaniedServiceOrder o) {
-        boolean removed = orders.remove(o);
+        boolean removed = serviceOrders.remove(o);
 
         if (removed) {
             orderCount--;
@@ -128,7 +135,7 @@ public class AccompaniedService {
 
     @DOpt(type=DOpt.Type.Setter)
     public void setAccompaniedServiceOrder(Collection<AccompaniedServiceOrder> orders) {
-        this.orders = orders;
+        this.serviceOrders = orders;
 
         orderCount = orders.size();
     }
@@ -149,7 +156,7 @@ public class AccompaniedService {
 
     @DOpt(type=DOpt.Type.Getter)
     public Collection<AccompaniedServiceOrder> getAccompaniedServiceOrders() {
-        return orders;
+        return serviceOrders;
     }
 
     private static int nextID(Integer currID) {

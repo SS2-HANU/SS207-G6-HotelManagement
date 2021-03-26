@@ -9,9 +9,14 @@ import domainapp.basics.model.meta.DOpt;
 import domainapp.basics.util.Tuple;
 import hanu.edu.hotelsystem.exceptions.DExCode;
 import hanu.edu.hotelsystem.utils.DToolkit;
-
-
 import java.util.Date;
+
+/**
+ * @overview Represents a person. The person ID is auto-incremented from 0
+
+ * @author nguyen minh chau
+ * @version 1.0
+ */
 
 @DClass(schema = "hotelsystem")
 public abstract class Person {

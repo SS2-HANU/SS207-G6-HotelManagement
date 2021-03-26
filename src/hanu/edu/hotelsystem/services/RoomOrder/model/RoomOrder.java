@@ -27,7 +27,7 @@ public class RoomOrder {
     private Reservation reservation;
 
 
-    @DAttr(name="service",type= DAttr.Type.Domain,length = 10, optional = false)
+    @DAttr(name="room",type= DAttr.Type.Domain,length = 10, optional = false)
     @DAssoc(ascName="room-has-room-order",role="room-order",
             ascType= DAssoc.AssocType.One2Many,endType= DAssoc.AssocEndType.Many,
             associate=@DAssoc.Associate(type= Room.class,cardMin=1,cardMax=1))

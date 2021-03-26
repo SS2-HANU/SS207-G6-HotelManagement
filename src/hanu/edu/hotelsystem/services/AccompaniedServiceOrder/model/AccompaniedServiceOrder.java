@@ -23,19 +23,19 @@ public class AccompaniedServiceOrder {
     private static int idCounter = 0;
 
     @DAttr(name="reservation",type= DAttr.Type.Domain,length = 10, optional = false)
-    @DAssoc(ascName="reservation-has-service-order",role="service-order",
+    @DAssoc(ascName="reservation-has-service-order",role="serviceOrder",
             ascType= DAssoc.AssocType.One2Many,endType= DAssoc.AssocEndType.Many,
             associate=@DAssoc.Associate(type=Reservation.class,cardMin=1,cardMax=1))
     private Reservation reservation;
 
     @DAttr(name="employee",type= DAttr.Type.Domain,length = 10, optional = false)
-    @DAssoc(ascName="employee-manages-service-order",role="service-order",
+    @DAssoc(ascName="employee-manages-service-order",role="serviceOrder",
             ascType= DAssoc.AssocType.One2Many,endType= DAssoc.AssocEndType.Many,
             associate=@DAssoc.Associate(type=Employee.class,cardMin=1,cardMax=1))
     private Employee employee;
 
     @DAttr(name="service",type= DAttr.Type.Domain,length = 10, optional = false)
-    @DAssoc(ascName="service-has-service-order",role="service-order",
+    @DAssoc(ascName="service-has-service-order",role="serviceOrder",
             ascType= DAssoc.AssocType.One2Many,endType= DAssoc.AssocEndType.Many,
             associate=@DAssoc.Associate(type= AccompaniedService.class,cardMin=1,cardMax=1))
     private AccompaniedService service;

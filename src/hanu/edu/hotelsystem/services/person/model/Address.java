@@ -9,6 +9,14 @@ import domainapp.basics.model.meta.DOpt;
 import domainapp.basics.util.Tuple;
 import hanu.edu.hotelsystem.services.person.model.Person;
 
+/**
+ * Represents a specific address. The department ID is auto-incremented from 0
+ *
+ *
+ * @author nguyen minh chau
+ * @version 1.0
+ */
+
 @DClass(schema="hotelsystem")
 public class Address {
 

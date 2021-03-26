@@ -29,7 +29,7 @@ public class Reservation {
     private Customer customer;
 
 
-    @DAttr(name = "service-order", type = DAttr.Type.Collection,
+    @DAttr(name = "serviceOrders", type = DAttr.Type.Collection,
             serialisable = false, optional = false,
             filter = @Select(clazz = AccompaniedServiceOrder.class))
     @DAssoc(ascName = "reservation-has-service-order", role = "reservation",
@@ -40,7 +40,7 @@ public class Reservation {
     private int serviceOrderCount;
 
 
-    @DAttr(name = "room-order", type = DAttr.Type.Collection,
+    @DAttr(name = "roomOrders", type = DAttr.Type.Collection,
             serialisable = false, optional = false,
             filter = @Select(clazz = RoomOrder.class))
     @DAssoc(ascName = "reservation-has-room-order", role = "reservation",
