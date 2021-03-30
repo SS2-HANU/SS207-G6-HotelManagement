@@ -1,4 +1,4 @@
-package hanu.edu.hotelsystem.services.AccompaniedService.model;
+package hanu.edu.hotelsystem.services.Service.model;
 
 public enum ServiceType {
     MAKEUP_ROOM,

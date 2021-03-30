@@ -1,4 +1,4 @@
-package hanu.edu.hotelsystem.services.AccompaniedService.model;
+package hanu.edu.hotelsystem.services.Service.model;
 
 import domainapp.basics.model.meta.AttrRef;
 import domainapp.basics.model.meta.DAssoc;
@@ -6,7 +6,7 @@ import domainapp.basics.model.meta.DAttr;
 import domainapp.basics.model.meta.DClass;
 import domainapp.basics.model.meta.DOpt;
 import domainapp.basics.model.meta.Select;
-import hanu.edu.hotelsystem.services.AccompaniedServiceOrder.model.AccompaniedServiceOrder;
+import hanu.edu.hotelsystem.services.ServiceOrder.model.ServiceOrder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,7 +20,7 @@ import java.util.Objects;
  */
 
 @DClass(schema = "hotelsystem")
-public class AccompaniedService {
+public class Service {
 
     @DAttr(name = "id", id = true, auto = true, length = 6, mutable = false, type = DAttr.Type.Integer)
     private int id;
@@ -34,25 +34,25 @@ public class AccompaniedService {
 
     @DAttr(name="serviceOrders",type= DAttr.Type.Collection,
             serialisable=false,optional=false,
-            filter=@Select(clazz= AccompaniedServiceOrder.class))
+            filter=@Select(clazz= ServiceOrder.class))
     @DAssoc(ascName="service-has-service-order",role="service",
             ascType= DAssoc.AssocType.One2Many,endType= DAssoc.AssocEndType.One,
-            associate=@DAssoc.Associate(type=AccompaniedServiceOrder.class,
+            associate=@DAssoc.Associate(type=ServiceOrder.class,
                     cardMin=1,cardMax=25))
-    private Collection<AccompaniedServiceOrder> serviceOrders;
+    private Collection<ServiceOrder> serviceOrders;
 
     private int orderCount;
 
 
     @DOpt(type = DOpt.Type.ObjectFormConstructor)
     @DOpt(type = DOpt.Type.RequiredConstructor)
-    public AccompaniedService(@AttrRef("name") String name,
+    public Service(@AttrRef("name") String name,
                               @AttrRef("price") Long price ) {
         this(null, name, price);
     }
 
     @DOpt(type = DOpt.Type.DataSourceConstructor)
-    public AccompaniedService(@AttrRef("id") Integer id, @AttrRef("name") String name,
+    public Service(@AttrRef("id") Integer id, @AttrRef("name") String name,
                               @AttrRef("price") Long price) {
         this.id = nextID(id);
         setName(name);
@@ -82,7 +82,7 @@ public class AccompaniedService {
         this.price = price;
     }
     @DOpt(type=DOpt.Type.LinkAdder)
-    public boolean addAccompaniedServiceOrder(AccompaniedServiceOrder order) {
+    public boolean addServiceOrder(ServiceOrder order) {
         if (!this.serviceOrders.contains(order)) {
             serviceOrders.add(order);
         }
@@ -92,7 +92,7 @@ public class AccompaniedService {
     }
 
     @DOpt(type=DOpt.Type.LinkAdderNew)
-    public boolean addNewAccompaniedServiceOrder(AccompaniedServiceOrder order) {
+    public boolean addNewServiceOrder(ServiceOrder order) {
         serviceOrders.add(order);
         orderCount++;
         // no other attributes changed
@@ -100,8 +100,8 @@ public class AccompaniedService {
     }
 
     @DOpt(type=DOpt.Type.LinkAdder)
-    public boolean addAccompaniedServiceOrder(Collection<AccompaniedServiceOrder> orders) {
-        for (AccompaniedServiceOrder o : orders) {
+    public boolean addServiceOrder(Collection<ServiceOrder> orders) {
+        for (ServiceOrder o : orders) {
             if (!this.serviceOrders.contains(o)) {
                 this.serviceOrders.add(o);
             }
@@ -112,7 +112,7 @@ public class AccompaniedService {
     }
 
     @DOpt(type=DOpt.Type.LinkAdderNew)
-    public boolean addNewAccompaniedServiceOrder(Collection<AccompaniedServiceOrder> orders) {
+    public boolean addNewServiceOrder(Collection<ServiceOrder> orders) {
         this.serviceOrders.addAll(orders);
         orderCount += orders.size();
 
@@ -122,7 +122,7 @@ public class AccompaniedService {
 
     @DOpt(type=DOpt.Type.LinkRemover)
     //only need to do this for reflexive association: @MemberRef(name="students")
-    public boolean removeAccompaniedServiceOrder(AccompaniedServiceOrder o) {
+    public boolean removeServiceOrder(ServiceOrder o) {
         boolean removed = serviceOrders.remove(o);
 
         if (removed) {
@@ -134,7 +134,7 @@ public class AccompaniedService {
     }
 
     @DOpt(type=DOpt.Type.Setter)
-    public void setAccompaniedServiceOrder(Collection<AccompaniedServiceOrder> orders) {
+    public void setServiceOrder(Collection<ServiceOrder> orders) {
         this.serviceOrders = orders;
 
         orderCount = orders.size();
@@ -145,17 +145,17 @@ public class AccompaniedService {
      *  return <tt>orderCount</tt>
      */
     @DOpt(type=DOpt.Type.LinkCountGetter)
-    public Integer getAccompaniedServiceOrderCount() {
+    public Integer getServiceOrderCount() {
         return orderCount;
     }
 
     @DOpt(type=DOpt.Type.LinkCountSetter)
-    public void setAccompaniedServiceOrderCount(int count) {
+    public void setServiceOrderCount(int count) {
         orderCount = count;
     }
 
     @DOpt(type=DOpt.Type.Getter)
-    public Collection<AccompaniedServiceOrder> getAccompaniedServiceOrders() {
+    public Collection<ServiceOrder> getServiceOrders() {
         return serviceOrders;
     }
 
@@ -176,7 +176,7 @@ public class AccompaniedService {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AccompaniedService that = (AccompaniedService) o;
+        Service that = (Service) o;
         return id == that.id;
     }
 

@@ -7,7 +7,7 @@ import domainapp.basics.model.meta.DAttr;
 import domainapp.basics.model.meta.DClass;
 import domainapp.basics.model.meta.DOpt;
 import domainapp.basics.model.meta.Select;
-import hanu.edu.hotelsystem.services.AccompaniedServiceOrder.model.AccompaniedServiceOrder;
+import hanu.edu.hotelsystem.services.ServiceOrder.model.ServiceOrder;
 import hanu.edu.hotelsystem.services.RoomOrder.model.RoomOrder;
 import hanu.edu.hotelsystem.services.person.model.Customer;
 
@@ -31,12 +31,12 @@ public class Reservation {
 
     @DAttr(name = "serviceOrders", type = DAttr.Type.Collection,
             serialisable = false, optional = false,
-            filter = @Select(clazz = AccompaniedServiceOrder.class))
+            filter = @Select(clazz = ServiceOrder.class))
     @DAssoc(ascName = "reservation-has-service-order", role = "reservation",
             ascType = DAssoc.AssocType.One2Many, endType = DAssoc.AssocEndType.One,
-            associate = @DAssoc.Associate(type = AccompaniedServiceOrder.class,
+            associate = @DAssoc.Associate(type = ServiceOrder.class,
                     cardMin = 0, cardMax = 25))
-    private Collection<AccompaniedServiceOrder> serviceOrders;
+    private Collection<ServiceOrder> serviceOrders;
     private int serviceOrderCount;
 
 
@@ -71,7 +71,7 @@ public class Reservation {
     }
 
     @DOpt(type = DOpt.Type.LinkAdder)
-    public boolean addAccompaniedServiceOrder(AccompaniedServiceOrder order) {
+    public boolean addServiceOrder(ServiceOrder order) {
         if (!this.serviceOrders.contains(order)) {
             serviceOrders.add(order);
         }
@@ -80,7 +80,7 @@ public class Reservation {
     }
 
     @DOpt(type = DOpt.Type.LinkAdderNew)
-    public boolean addNewAccompaniedServiceOrder(AccompaniedServiceOrder order) {
+    public boolean addNewServiceOrder(ServiceOrder order) {
         serviceOrders.add(order);
         serviceOrderCount++;
         // no other attributes changed
@@ -88,8 +88,8 @@ public class Reservation {
     }
 
     @DOpt(type = DOpt.Type.LinkAdder)
-    public boolean addAccompaniedServiceOrder(Collection<AccompaniedServiceOrder> orders) {
-        for (AccompaniedServiceOrder o : orders) {
+    public boolean addAccompaniedServiceOrder(Collection<ServiceOrder> orders) {
+        for (ServiceOrder o : orders) {
             if (!this.serviceOrders.contains(o)) {
                 this.serviceOrders.add(o);
             }
@@ -100,7 +100,7 @@ public class Reservation {
     }
 
     @DOpt(type = DOpt.Type.LinkAdderNew)
-    public boolean addNewAccompaniedServiceOrder(Collection<AccompaniedServiceOrder> orders) {
+    public boolean addNewServiceOrder(Collection<ServiceOrder> orders) {
         this.serviceOrders.addAll(orders);
         serviceOrderCount += orders.size();
 
@@ -110,7 +110,7 @@ public class Reservation {
 
     @DOpt(type = DOpt.Type.LinkRemover)
     //only need to do this for reflexive association: @MemberRef(name="students")
-    public boolean removeAccompaniedServiceOrder(AccompaniedServiceOrder o) {
+    public boolean removeServiceOrder(ServiceOrder o) {
         boolean removed = serviceOrders.remove(o);
 
         if (removed) {
@@ -122,7 +122,7 @@ public class Reservation {
     }
 
     @DOpt(type = DOpt.Type.Setter)
-    public void setAccompaniedServiceOrder(Collection<AccompaniedServiceOrder> orders) {
+    public void setServiceOrder(Collection<ServiceOrder> orders) {
         this.serviceOrders = orders;
 
         serviceOrderCount = orders.size();
@@ -132,17 +132,17 @@ public class Reservation {
      * @effects return <tt>orderCount</tt>
      */
     @DOpt(type = DOpt.Type.LinkCountGetter)
-    public Integer getAccompaniedServiceOrderCount() {
+    public Integer getServiceOrderCount() {
         return serviceOrderCount;
     }
 
     @DOpt(type = DOpt.Type.LinkCountSetter)
-    public void setAccompaniedServiceOrderCount(int count) {
+    public void setServiceOrderCount(int count) {
         serviceOrderCount = count;
     }
 
     @DOpt(type = DOpt.Type.Getter)
-    public Collection<AccompaniedServiceOrder> getAccompaniedServiceOrders() {
+    public Collection<ServiceOrder> getServiceOrders() {
         return serviceOrders;
     }
 

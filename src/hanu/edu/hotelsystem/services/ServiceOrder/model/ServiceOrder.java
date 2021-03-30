@@ -1,4 +1,4 @@
-package hanu.edu.hotelsystem.services.AccompaniedServiceOrder.model;
+package hanu.edu.hotelsystem.services.ServiceOrder.model;
 
 import domainapp.basics.exceptions.ConstraintViolationException;
 import domainapp.basics.model.meta.AttrRef;
@@ -6,8 +6,7 @@ import domainapp.basics.model.meta.DAssoc;
 import domainapp.basics.model.meta.DAttr;
 import domainapp.basics.model.meta.DClass;
 import domainapp.basics.model.meta.DOpt;
-import domainapp.basics.model.meta.Select;
-import hanu.edu.hotelsystem.services.AccompaniedService.model.AccompaniedService;
+import hanu.edu.hotelsystem.services.Service.model.Service;
 import hanu.edu.hotelsystem.services.Reservation.model.Reservation;
 import hanu.edu.hotelsystem.services.person.model.Employee;
 
@@ -15,7 +14,7 @@ import java.util.Objects;
 
 
 @DClass(schema = "hotelsystem")
-public class AccompaniedServiceOrder {
+public class ServiceOrder {
 
     @DAttr(name = "id", id = true, type = DAttr.Type.Integer, auto = true, length = 6,
             mutable = false, optional = false)
@@ -37,21 +36,21 @@ public class AccompaniedServiceOrder {
     @DAttr(name="service",type= DAttr.Type.Domain,length = 10, optional = false)
     @DAssoc(ascName="service-has-service-order",role="serviceOrder",
             ascType= DAssoc.AssocType.One2Many,endType= DAssoc.AssocEndType.Many,
-            associate=@DAssoc.Associate(type= AccompaniedService.class,cardMin=1,cardMax=1))
-    private AccompaniedService service;
+            associate=@DAssoc.Associate(type= Service.class,cardMin=1,cardMax=1))
+    private Service service;
 
     @DOpt(type=DOpt.Type.ObjectFormConstructor)
-    public AccompaniedServiceOrder(@AttrRef("reservation") Reservation reservation,
-                                   @AttrRef("employee") Employee employee ,
-                                   @AttrRef("service") AccompaniedService service){
+    public ServiceOrder(@AttrRef("reservation") Reservation reservation,
+                        @AttrRef("employee") Employee employee ,
+                        @AttrRef("service") Service service){
         this(null, reservation,employee, service);
     }
 
     @DOpt(type=DOpt.Type.DataSourceConstructor)
-    public AccompaniedServiceOrder(@AttrRef("id") Integer id,
-                                   @AttrRef("reservation") Reservation reservation,
-                                   @AttrRef("employee") Employee employee ,
-                                   @AttrRef("service") AccompaniedService service) throws ConstraintViolationException {
+    public ServiceOrder(@AttrRef("id") Integer id,
+                        @AttrRef("reservation") Reservation reservation,
+                        @AttrRef("employee") Employee employee ,
+                        @AttrRef("service") Service service) throws ConstraintViolationException {
         this.id = nextId(id);
         this.reservation= reservation;
         this.employee = employee;
@@ -91,11 +90,11 @@ public class AccompaniedServiceOrder {
         this.employee = employee;
     }
 
-    public AccompaniedService getService() {
+    public Service getService() {
         return service;
     }
 
-    public void setService(AccompaniedService service) {
+    public void setService(Service service) {
         this.service = service;
     }
 
@@ -103,7 +102,7 @@ public class AccompaniedServiceOrder {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AccompaniedServiceOrder that = (AccompaniedServiceOrder) o;
+        ServiceOrder that = (ServiceOrder) o;
         return id == that.id;
     }
 
@@ -114,7 +113,7 @@ public class AccompaniedServiceOrder {
 
     @Override
     public String toString() {
-        return "AccompaniedServiceOrder{" +
+        return "ServiceOrder{" +
                 "id=" + id +
                 ", reservation=" + reservation +
                 ", employee=" + employee +

@@ -7,7 +7,7 @@ import domainapp.basics.model.meta.DAttr;
 import domainapp.basics.model.meta.DClass;
 import domainapp.basics.model.meta.DOpt;
 import domainapp.basics.util.Tuple;
-import hanu.edu.hotelsystem.services.AccompaniedServiceOrder.model.AccompaniedServiceOrder;
+import hanu.edu.hotelsystem.services.ServiceOrder.model.ServiceOrder;
 import hanu.edu.hotelsystem.services.Department.model.Department;
 
 import java.util.Collection;
@@ -42,9 +42,9 @@ public class Employee extends Person {
 
     @DAssoc(ascName="employee-manages-service-order",role="employee",
             ascType= DAssoc.AssocType.One2Many,endType= DAssoc.AssocEndType.One,
-            associate=@DAssoc.Associate(type=AccompaniedServiceOrder.class,
+            associate=@DAssoc.Associate(type= ServiceOrder.class,
                     cardMin=1,cardMax=25))
-    private Collection<AccompaniedServiceOrder> orders;
+    private Collection<ServiceOrder> orders;
     private int orderCount;
 
     @DOpt(type = DOpt.Type.ObjectFormConstructor)
@@ -114,7 +114,7 @@ public class Employee extends Person {
     }
 
     @DOpt(type=DOpt.Type.LinkAdder)
-    public boolean addAccompaniedServiceOrder(AccompaniedServiceOrder order) {
+    public boolean addAccompaniedServiceOrder(ServiceOrder order) {
         if (!this.orders.contains(order)) {
             orders.add(order);
         }
@@ -124,7 +124,7 @@ public class Employee extends Person {
     }
 
     @DOpt(type=DOpt.Type.LinkAdderNew)
-    public boolean addNewAccompaniedServiceOrder(AccompaniedServiceOrder order) {
+    public boolean addNewAccompaniedServiceOrder(ServiceOrder order) {
         orders.add(order);
         orderCount++;
         // no other attributes changed
@@ -132,8 +132,8 @@ public class Employee extends Person {
     }
 
     @DOpt(type=DOpt.Type.LinkAdder)
-    public boolean addAccompaniedServiceOrder(Collection<AccompaniedServiceOrder> orders) {
-        for (AccompaniedServiceOrder o : orders) {
+    public boolean addAccompaniedServiceOrder(Collection<ServiceOrder> orders) {
+        for (ServiceOrder o : orders) {
             if (!this.orders.contains(o)) {
                 this.orders.add(o);
             }
@@ -144,7 +144,7 @@ public class Employee extends Person {
     }
 
     @DOpt(type=DOpt.Type.LinkAdderNew)
-    public boolean addNewAccompaniedServiceOrder(Collection<AccompaniedServiceOrder> orders) {
+    public boolean addNewAccompaniedServiceOrder(Collection<ServiceOrder> orders) {
         this.orders.addAll(orders);
         orderCount += orders.size();
 
@@ -154,7 +154,7 @@ public class Employee extends Person {
 
     @DOpt(type=DOpt.Type.LinkRemover)
     //only need to do this for reflexive association: @MemberRef(name="students")
-    public boolean removeAccompaniedServiceOrder(AccompaniedServiceOrder o) {
+    public boolean removeAccompaniedServiceOrder(ServiceOrder o) {
         boolean removed = orders.remove(o);
 
         if (removed) {
@@ -166,7 +166,7 @@ public class Employee extends Person {
     }
 
     @DOpt(type=DOpt.Type.Setter)
-    public void setAccompaniedServiceOrder(Collection<AccompaniedServiceOrder> orders) {
+    public void setAccompaniedServiceOrder(Collection<ServiceOrder> orders) {
         this.orders = orders;
 
         orderCount = orders.size();
@@ -187,7 +187,7 @@ public class Employee extends Person {
     }
 
     @DOpt(type=DOpt.Type.Getter)
-    public Collection<AccompaniedServiceOrder> getAccompaniedServiceOrders() {
+    public Collection<ServiceOrder> getAccompaniedServiceOrders() {
         return orders;
     }
 

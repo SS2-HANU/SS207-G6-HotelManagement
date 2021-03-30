@@ -8,7 +8,7 @@ import domainapp.basics.model.meta.DClass;
 import domainapp.basics.model.meta.DOpt;
 import domainapp.basics.model.meta.Select;
 import domainapp.basics.util.Tuple;
-import hanu.edu.hotelsystem.services.AccompaniedServiceOrder.model.AccompaniedServiceOrder;
+import hanu.edu.hotelsystem.services.ServiceOrder.model.ServiceOrder;
 import hanu.edu.hotelsystem.services.Department.model.Department;
 
 import java.util.ArrayList;
@@ -44,12 +44,12 @@ public class Employee extends Person {
 
     @DAttr(name="serviceOrders",type= DAttr.Type.Collection,
             serialisable=false,optional=false,
-            filter=@Select(clazz= AccompaniedServiceOrder.class))
+            filter=@Select(clazz= ServiceOrder.class))
     @DAssoc(ascName="employee-manages-service-order",role="employee",
             ascType= DAssoc.AssocType.One2Many,endType= DAssoc.AssocEndType.One,
-            associate=@DAssoc.Associate(type=AccompaniedServiceOrder.class,
+            associate=@DAssoc.Associate(type= ServiceOrder.class,
                     cardMin=0,cardMax=25))
-    private Collection<AccompaniedServiceOrder> serviceOrders;
+    private Collection<ServiceOrder> serviceOrders;
 
     private int orderCount;
 
@@ -123,7 +123,7 @@ public class Employee extends Person {
     }
 
     @DOpt(type=DOpt.Type.LinkAdder)
-    public boolean addAccompaniedServiceOrder(AccompaniedServiceOrder order) {
+    public boolean addServiceOrder(ServiceOrder order) {
         if (!this.serviceOrders.contains(order)) {
             serviceOrders.add(order);
         }
@@ -133,7 +133,7 @@ public class Employee extends Person {
     }
 
     @DOpt(type=DOpt.Type.LinkAdderNew)
-    public boolean addNewAccompaniedServiceOrder(AccompaniedServiceOrder order) {
+    public boolean addNewServiceOrder(ServiceOrder order) {
         serviceOrders.add(order);
         orderCount++;
         // no other attributes changed
@@ -141,8 +141,8 @@ public class Employee extends Person {
     }
 
     @DOpt(type=DOpt.Type.LinkAdder)
-    public boolean addAccompaniedServiceOrder(Collection<AccompaniedServiceOrder> orders) {
-        for (AccompaniedServiceOrder o : orders) {
+    public boolean addServiceOrder(Collection<ServiceOrder> orders) {
+        for (ServiceOrder o : orders) {
             if (!this.serviceOrders.contains(o)) {
                 this.serviceOrders.add(o);
             }
@@ -153,7 +153,7 @@ public class Employee extends Person {
     }
 
     @DOpt(type=DOpt.Type.LinkAdderNew)
-    public boolean addNewAccompaniedServiceOrder(Collection<AccompaniedServiceOrder> orders) {
+    public boolean addNewServiceOrder(Collection<ServiceOrder> orders) {
         this.serviceOrders.addAll(orders);
         orderCount += orders.size();
 
@@ -163,7 +163,7 @@ public class Employee extends Person {
 
     @DOpt(type=DOpt.Type.LinkRemover)
     //only need to do this for reflexive association: @MemberRef(name="students")
-    public boolean removeAccompaniedServiceOrder(AccompaniedServiceOrder o) {
+    public boolean removeServiceOrder(ServiceOrder o) {
         boolean removed = serviceOrders.remove(o);
 
         if (removed) {
@@ -175,7 +175,7 @@ public class Employee extends Person {
     }
 
     @DOpt(type=DOpt.Type.Setter)
-    public void setAccompaniedServiceOrder(Collection<AccompaniedServiceOrder> orders) {
+    public void setServiceOrder(Collection<ServiceOrder> orders) {
         this.serviceOrders = orders;
 
         orderCount = orders.size();
@@ -191,12 +191,12 @@ public class Employee extends Person {
     }
 
     @DOpt(type=DOpt.Type.LinkCountSetter)
-    public void setAccompaniedServiceOrderCount(int count) {
+    public void setServiceOrderCount(int count) {
         orderCount = count;
     }
 
     @DOpt(type=DOpt.Type.Getter)
-    public Collection<AccompaniedServiceOrder> getAccompaniedServiceOrders() {
+    public Collection<ServiceOrder> getServiceOrders() {
         return serviceOrders;
     }
 
@@ -204,7 +204,7 @@ public class Employee extends Person {
     public String toString() {
         return "Employee{" +
                 "id='" + getId() +
-                ", name='" + code +
+                ", code='" + code +
                 ", name='" + getName() +
                 ", gender='" + getGender() +
                 ", dob='" + getDob() +
