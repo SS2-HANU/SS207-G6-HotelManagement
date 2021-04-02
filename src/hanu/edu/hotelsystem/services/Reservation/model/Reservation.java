@@ -7,12 +7,15 @@ import domainapp.basics.model.meta.DAttr;
 import domainapp.basics.model.meta.DClass;
 import domainapp.basics.model.meta.DOpt;
 import domainapp.basics.model.meta.Select;
+import hanu.edu.hotelsystem.exceptions.DExCode;
 import hanu.edu.hotelsystem.services.ServiceOrder.model.ServiceOrder;
 import hanu.edu.hotelsystem.services.RoomOrder.model.RoomOrder;
-import hanu.edu.hotelsystem.services.person.model.Customer;
+import hanu.edu.hotelsystem.services.Person.model.Customer;
+import hanu.edu.hotelsystem.utils.DToolkit;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Objects;
 
 @DClass(schema = "hotelsystem")
@@ -21,6 +24,15 @@ public class Reservation {
     @DAttr(name = "id", id = true, auto = true, length = 6, mutable = false, type = DAttr.Type.Integer)
     private int id;
     private static int idCounter;
+
+    @DAttr(name = "createdAt", type = DAttr.Type.Date, length = 15, optional = false, format= DAttr.Format.Date)
+    private Date createdAt;
+
+    @DAttr(name = "startDate", type = DAttr.Type.Date, length = 15, optional = false, format= DAttr.Format.Date)
+    private Date startDate;
+
+    @DAttr(name = "endDate", type = DAttr.Type.Date, length = 15, optional = false, format= DAttr.Format.Date)
+    private Date endDate;
 
     @DAttr(name = "customer", type = DAttr.Type.Domain, length = 20, optional = false)
     @DAssoc(ascName = "customer-has-reservation", role = "reservation",
@@ -52,14 +64,23 @@ public class Reservation {
     private int roomOrderCount;
 
     @DOpt(type = DOpt.Type.ObjectFormConstructor)
-    public Reservation(@AttrRef("customer") Customer customer) {
-        this(null, customer);
+    public Reservation(@AttrRef("createdAt") Date createdAt,
+                       @AttrRef("startDate") Date startDate,
+                       @AttrRef("endDate") Date endDate,
+                       @AttrRef("customer") Customer customer) {
+        this(null,createdAt, startDate, endDate, customer);
     }
 
     @DOpt(type = DOpt.Type.DataSourceConstructor)
     public Reservation(@AttrRef("id") Integer id,
+                       @AttrRef("createdAt") Date createdAt,
+                       @AttrRef("startDate") Date startDate,
+                       @AttrRef("endDate") Date endDate,
                        @AttrRef("customer") Customer customer) throws ConstraintViolationException {
         this.id = nextID(id);
+        setCreatedAt(createdAt);
+        setStartDate(startDate);
+        setEndDate(endDate);
         this.customer = customer;
 
         serviceOrders = new ArrayList<>();
@@ -88,7 +109,7 @@ public class Reservation {
     }
 
     @DOpt(type = DOpt.Type.LinkAdder)
-    public boolean addAccompaniedServiceOrder(Collection<ServiceOrder> orders) {
+    public boolean addServiceOrder(Collection<ServiceOrder> orders) {
         for (ServiceOrder o : orders) {
             if (!this.serviceOrders.contains(o)) {
                 this.serviceOrders.add(o);
@@ -239,6 +260,39 @@ public class Reservation {
         return id;
     }
 
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        if (createdAt.before(DToolkit.MIN_DATE)) {
+            throw new ConstraintViolationException(DExCode.INVALID_CREATED_DATE, createdAt);
+        }
+        this.createdAt = createdAt;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        if (startDate.before(DToolkit.MIN_DATE)) {
+            throw new ConstraintViolationException(DExCode.INVALID_START_DATE, startDate);
+        }
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        if (endDate.before(DToolkit.MIN_DATE) && endDate.before(startDate))  {
+            throw new ConstraintViolationException(DExCode.INVALID_END_DATE, endDate);
+        }
+        this.endDate = endDate;
+    }
+
     public Customer getCustomer() {
         return customer;
     }
@@ -264,11 +318,10 @@ public class Reservation {
     public String toString() {
         return "Reservation{" +
                 "id=" + id +
+                ", createdAt=" + createdAt +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
                 ", customer=" + customer +
-                ", serviceOrders=" + serviceOrders +
-                ", serviceOrderCount=" + serviceOrderCount +
-                ", roomOrders=" + roomOrders +
-                ", roomOrderCount=" + roomOrderCount +
                 '}';
     }
 }

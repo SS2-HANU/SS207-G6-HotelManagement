@@ -8,7 +8,7 @@ import domainapp.basics.model.meta.DClass;
 import domainapp.basics.model.meta.DOpt;
 import domainapp.basics.model.meta.Select;
 import domainapp.basics.util.Tuple;
-import hanu.edu.hotelsystem.services.person.model.Employee;
+import hanu.edu.hotelsystem.services.Person.model.Employee;
 
 import java.util.ArrayList;
 import java.util.Collection;

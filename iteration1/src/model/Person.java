@@ -83,7 +83,7 @@ public abstract class Person {
 
     public void setDob(Date dob) throws ConstraintViolationException {
         // additional validation on dob
-        if (dob.before(DToolkit.MIN_DOB)) {
+        if (dob.before(DToolkit.MIN_DATE)) {
             throw new ConstraintViolationException(DExCode.INVALID_DOB, dob);
         }
         this.dob = dob;

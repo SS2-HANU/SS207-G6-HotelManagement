@@ -12,7 +12,8 @@ import java.util.Date;
  */
 public class DToolkit {
   
-  public static final Date MIN_DOB = getTime(1,0,1900);
+  public static final Date MIN_DATE = getTime(1,0,1900);
+
 
   private DToolkit() {}
 
