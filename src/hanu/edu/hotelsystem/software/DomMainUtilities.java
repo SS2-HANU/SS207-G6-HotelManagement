@@ -3,7 +3,7 @@ package hanu.edu.hotelsystem.software;
 import domainapp.basics.exceptions.DataSourceException;
 import domainapp.software.SoftwareFactory;
 import domainapp.softwareimpl.DomSoftware;
-import hanu.edu.hotelsystem.services.person.model.Employee;
+import hanu.edu.hotelsystem.services.Person.model.Employee;
 
 /**
  * @overview 

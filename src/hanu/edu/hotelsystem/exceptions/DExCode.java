@@ -25,7 +25,7 @@ import java.text.MessageFormat;
      *  Here, <tt>dob.toString()</tt> is the run-time value that replaces the template variable {0} in
      *  the enum INVALID_DOB.
      *
-     * @author Duc Minh Le (ducmle)
+     *
      *
      */
     public enum DExCode implements InfoCode {
@@ -38,17 +38,17 @@ import java.text.MessageFormat;
         /**
          * 0: address
          */
-        INVALID_ADDRESS("Address {0} is not a valid address"),
+        INVALID_CREATED_DATE("Date is not a valid date"),
 
         /**
          * 0: email
          */
-        INVALID_EMAIL("Email {0} is not a valid email"),
+        INVALID_START_DATE("Date is not a valid date"),
 
         /**
          * 0: exam mark
          */
-        INVALID_EXAM_MARK("Exam Mark {0} is not a valid exam mark"),
+        INVALID_END_DATE("Date is not a valid date"),
 
         /**
          * 0: internal mark
