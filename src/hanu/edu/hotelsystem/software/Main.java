@@ -1,5 +1,6 @@
 package hanu.edu.hotelsystem.software;
 
+import domainapp.basics.exceptions.DataSourceException;
 import domainapp.software.SoftwareFactory;
 import domainapp.softwareimpl.DomSoftware;
 import hanu.edu.hotelsystem.services.Department.model.Department;
@@ -49,16 +50,18 @@ public class Main {
             SpaServiceOrder.class,
             TransportationService.class,
             TransportationServiceOrder.class
-
     };
-    
+
+    // delete Domain Model
+    deleteDomainModel();
+
     // 2. create UI software
     DomSoftware sw = SoftwareFactory.createUIDomSoftware();
     
     // 3. run
     // create in memory configuration
     System.setProperty("domainapp.setup.SerialiseConfiguration", "false");
-    
+
     // 3. run it
     try {
       sw.run(model);
@@ -68,4 +71,24 @@ public class Main {
     }   
   }
 
+  private static void deleteDomainModel() {
+    try {
+      DomSoftware sw = SoftwareFactory.createDefaultDomSoftware();
+
+      // this should be run subsequent times
+      sw.init();
+      // delete the domain model
+      String modelName = sw.getDomainModelName(Employee.class);
+      if (modelName != null) {
+        try {
+          sw.deleteDomainModel(modelName);
+        } catch (DataSourceException e) {
+          e.printStackTrace();
+        }
+      }
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 }

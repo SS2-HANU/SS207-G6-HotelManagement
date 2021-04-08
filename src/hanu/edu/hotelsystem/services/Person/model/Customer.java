@@ -8,6 +8,7 @@ import domainapp.basics.model.meta.DClass;
 import domainapp.basics.model.meta.DOpt;
 import domainapp.basics.model.meta.Select;
 import hanu.edu.hotelsystem.services.Reservation.model.Reservation;
+import hanu.edu.hotelsystem.services.ServiceOrder.model.RestaurantServiceOrder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,8 +32,18 @@ public class Customer extends Person{
             associate=@DAssoc.Associate(type=Reservation.class,
                     cardMin=0,cardMax=25))
     private Collection<Reservation> reservations;
-    
     private int reservationsCount;
+
+    @DAttr(name="restaurantServiceOrders",type= DAttr.Type.Collection,
+            serialisable=false,optional=false,
+            filter=@Select(clazz= RestaurantServiceOrder.class))
+    @DAssoc(ascName="customer-has-restaurant-service-order",role="customer",
+            ascType= DAssoc.AssocType.One2Many,endType= DAssoc.AssocEndType.One,
+            associate=@DAssoc.Associate(type=RestaurantServiceOrder.class,
+                    cardMin=1,cardMax=25))
+    private Collection<RestaurantServiceOrder> restaurantServiceOrders;
+    private int restaurantServiceOrderCount;
+
     
     @DOpt(type = DOpt.Type.ObjectFormConstructor)
     public Customer(
@@ -58,6 +69,9 @@ public class Customer extends Person{
         
         reservations = new ArrayList<>();
         reservationsCount =0;
+
+        restaurantServiceOrders = new ArrayList<>();
+        restaurantServiceOrderCount = 0;
         
     }
 
@@ -68,10 +82,8 @@ public class Customer extends Person{
 
     private String nextCode(String code) throws ConstraintViolationException {
         if (code == null) { // generate a new id
-            if (counter == 0) {
-                counter++;
-            }
-            return "C" + counter;
+
+            return "C" + ++counter;
         } else {
             // update id
             int num;
@@ -169,5 +181,82 @@ public class Customer extends Person{
 
     public Collection<Reservation> getReservations() {
         return reservations;
+    }
+
+    @DOpt(type=DOpt.Type.LinkAdder)
+    public boolean addRestaurantServiceOrder(RestaurantServiceOrder order) {
+        if (!this.restaurantServiceOrders.contains(order)) {
+            restaurantServiceOrders.add(order);
+        }
+
+        // no other attributes changed
+        return false;
+    }
+
+    @DOpt(type=DOpt.Type.LinkAdderNew)
+    public boolean addNewRestaurantServiceOrder(RestaurantServiceOrder order) {
+        restaurantServiceOrders.add(order);
+        restaurantServiceOrderCount++;
+        // no other attributes changed
+        return false;
+    }
+
+    @DOpt(type=DOpt.Type.LinkAdder)
+    public boolean addRestaurantServiceOrder(Collection<RestaurantServiceOrder> orders) {
+        for (RestaurantServiceOrder o : orders) {
+            if (!this.restaurantServiceOrders.contains(o)) {
+                this.restaurantServiceOrders.add(o);
+            }
+        }
+
+        // no other attributes changed
+        return false;
+    }
+
+    @DOpt(type=DOpt.Type.LinkAdderNew)
+    public boolean addNewRestaurantServiceOrder(Collection<RestaurantServiceOrder> orders) {
+        this.restaurantServiceOrders.addAll(orders);
+        restaurantServiceOrderCount += orders.size();
+
+        // no other attributes changed
+        return false;
+    }
+
+    @DOpt(type=DOpt.Type.LinkRemover)
+    //only need to do this for reflexive association: @MemberRef(name="students")
+    public boolean removeRestaurantServiceOrder(RestaurantServiceOrder o) {
+        boolean removed = restaurantServiceOrders.remove(o);
+
+        if (removed) {
+            restaurantServiceOrderCount--;
+        }
+
+        // no other attributes changed
+        return false;
+    }
+
+    @DOpt(type=DOpt.Type.Setter)
+
+    /**
+     * @effects
+     *  return <tt>orderCount</tt>
+     */
+    @DOpt(type=DOpt.Type.LinkCountGetter)
+    public Integer getRestaurantServiceOrderCount() {
+        return restaurantServiceOrderCount;
+    }
+
+    @DOpt(type=DOpt.Type.LinkCountSetter)
+    public void setRestaurantServiceOrderCount(int count) {
+        restaurantServiceOrderCount = count;
+    }
+
+    @DOpt(type=DOpt.Type.Getter)
+    public Collection<RestaurantServiceOrder> getRestaurantServiceOrders() {
+        return restaurantServiceOrders;
+    }
+
+    public void setRestaurantServiceOrders(Collection<RestaurantServiceOrder> restaurantServiceOrders) {
+        this.restaurantServiceOrders = restaurantServiceOrders;
     }
 }

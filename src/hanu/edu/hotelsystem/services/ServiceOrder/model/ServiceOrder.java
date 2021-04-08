@@ -50,8 +50,9 @@ public abstract class ServiceOrder {
     public ServiceOrder(@AttrRef("createdAt") Date createdAt,
                         @AttrRef("quantity") Integer quantity,
                         @AttrRef("reservation") Reservation reservation,
+                        @AttrRef("rating") Integer rating,
                         @AttrRef("employee") Employee employee){
-        this(null, createdAt, quantity, reservation,employee);
+        this(null, createdAt, quantity, reservation,rating,employee);
     }
 
     @DOpt(type=DOpt.Type.DataSourceConstructor)
@@ -59,11 +60,13 @@ public abstract class ServiceOrder {
                         @AttrRef("createdAt") Date createdAt,
                         @AttrRef("quantity") Integer quantity,
                         @AttrRef("reservation") Reservation reservation,
+                        @AttrRef("rating") Integer rating,
                         @AttrRef("employee") Employee employee) throws ConstraintViolationException {
         this.id = nextId(id);
         this.quantity = quantity;
         this.createdAt = createdAt;
         this.reservation= reservation;
+        this.rating = rating;
         this.employee = employee;
     }
 
@@ -144,7 +147,6 @@ public abstract class ServiceOrder {
                 ", createdAt=" + createdAt +
                 ", quantity=" + quantity +
                 ", rating=" + rating +
-                ", reservation=" + reservation +
                 ", employee=" + employee +
                 '}';
     }

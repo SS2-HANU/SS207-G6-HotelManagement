@@ -7,6 +7,7 @@ import domainapp.basics.model.meta.DAttr;
 import domainapp.basics.model.meta.DClass;
 import domainapp.basics.model.meta.DOpt;
 import domainapp.basics.model.meta.Select;
+import domainapp.basics.util.cache.StateHistory;
 import hanu.edu.hotelsystem.exceptions.DExCode;
 import hanu.edu.hotelsystem.services.ServiceOrder.model.ServiceOrder;
 import hanu.edu.hotelsystem.services.RoomOrder.model.RoomOrder;
@@ -20,6 +21,9 @@ import java.util.Objects;
 
 @DClass(schema = "hotelsystem")
 public class Reservation {
+
+    private static final String AttributeName_Status = "status";
+
 
     @DAttr(name = "id", id = true, auto = true, length = 6, mutable = false, type = DAttr.Type.Integer)
     private int id;
@@ -39,6 +43,12 @@ public class Reservation {
             ascType = DAssoc.AssocType.One2One, endType = DAssoc.AssocEndType.One,
             associate = @DAssoc.Associate(type = Customer.class, cardMin = 1, cardMax = 1))
     private Customer customer;
+
+    @DAttr(name = AttributeName_Status, type = DAttr.Type.Domain, auto = true, length = 8, serialisable = false,
+            mutable = false, optional = false, derivedFrom = {"startDate", "endDate"})
+    private Status status;
+
+    private StateHistory<String, Object> stateHist;
 
 
     @DAttr(name = "serviceOrders", type = DAttr.Type.Collection,
@@ -83,12 +93,52 @@ public class Reservation {
         setEndDate(endDate);
         this.customer = customer;
 
+        stateHist = new StateHistory<>();
+
         serviceOrders = new ArrayList<>();
         serviceOrderCount = 0;
 
         roomOrders = new ArrayList<>();
         roomOrderCount = 0;
 
+        updateStatus();
+//        System.out.println("UPDATED");
+//        System.out.println(this.stateHist.get(AttributeName_Status).toString());
+    }
+
+    @DOpt(type = DOpt.Type.DerivedAttributeUpdater)
+    @AttrRef(value = AttributeName_Status)
+    public void updateStatus() {
+        Status status;
+        if (endDate.before(DToolkit.getNow())) {
+            status = Status.COMPLETED;
+        } else if (startDate.before(DToolkit.getNow()) && endDate.after(DToolkit.getNow()) ){
+            status = Status.SERVING;
+        } else {
+          status = Status.REGISTERED;
+        }
+        stateHist.put(AttributeName_Status, status);
+    }
+
+    public Status getStatus() {
+        return getStatus(false);
+    }
+
+    public Status getStatus(boolean cached) throws IllegalStateException {
+        if (cached) {
+            Object status = stateHist.get(AttributeName_Status);
+
+            if (status == null)
+                throw new IllegalStateException(
+                        "Reservation.getStatus(): cached value is null");
+
+            return (Status) status;
+        } else {
+            if (status != null)
+                return status;
+            else
+                return Status.UNDEFINED;
+        }
     }
 
     @DOpt(type = DOpt.Type.LinkAdder)
@@ -280,6 +330,13 @@ public class Reservation {
             throw new ConstraintViolationException(DExCode.INVALID_START_DATE, startDate);
         }
         this.startDate = startDate;
+        setStartDate(startDate, false);
+    }
+
+    public void setStartDate(Date startDate, boolean updateStatus) {
+        this.startDate = startDate;
+        if(updateStatus)
+        updateStatus();
     }
 
     public Date getEndDate() {
@@ -291,6 +348,13 @@ public class Reservation {
             throw new ConstraintViolationException(DExCode.INVALID_END_DATE, endDate);
         }
         this.endDate = endDate;
+        setEndDate(endDate, false);
+    }
+
+    public void setEndDate(Date endDate, boolean updateStatus) {
+        this.endDate = endDate;
+        if(updateStatus)
+            updateStatus();
     }
 
     public Customer getCustomer() {

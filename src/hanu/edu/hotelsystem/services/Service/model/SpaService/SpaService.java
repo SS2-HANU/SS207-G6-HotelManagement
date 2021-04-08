@@ -6,6 +6,7 @@ import domainapp.basics.model.meta.DAttr;
 import domainapp.basics.model.meta.DClass;
 import domainapp.basics.model.meta.DOpt;
 import domainapp.basics.model.meta.Select;
+import hanu.edu.hotelsystem.services.Service.model.Service;
 import hanu.edu.hotelsystem.services.ServiceOrder.model.SpaServiceOrder;
 
 import java.util.ArrayList;
@@ -13,16 +14,12 @@ import java.util.Collection;
 import java.util.Objects;
 
 @DClass(schema = "hotelsystem")
-public class SpaService {
-    @DAttr(name = "id", id = true, auto = true, length = 6, mutable = false, type = DAttr.Type.Integer)
-    private int id;
-    private static int idCounter;
+public class SpaService extends Service {
 
-    @DAttr(name = "type", type = DAttr.Type.Domain, length = 30, optional = false)
+
+    @DAttr(name = "type", type = DAttr.Type.Domain, length = 30, optional = false, cid = true)
     private Duration type;
 
-    @DAttr(name = "price", type = DAttr.Type.Long, optional = false)
-    private Long price;
 
     @DAttr(name="spaServiceOrders",type= DAttr.Type.Collection,
             serialisable=false,optional=false,
@@ -46,25 +43,13 @@ public class SpaService {
     @DOpt(type = DOpt.Type.DataSourceConstructor)
     public SpaService(@AttrRef("id") Integer id, @AttrRef("type") Duration type,
                        @AttrRef("price") Long price) {
-        this.id = nextID(id);
+        super(id, price);
         this.type = type;
-        setPrice(price);
 
         spaServiceOrders = new ArrayList<>();
         orderCount = 0;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public Long getPrice() {
-        return price;
-    }
-
-    public void setPrice(Long price) {
-        this.price = price;
-    }
 
     public Duration getType() {
         return type;
@@ -152,29 +137,4 @@ public class SpaService {
         return spaServiceOrders;
     }
 
-    private static int nextID(Integer currID) {
-        if (currID == null) {
-            idCounter++;
-            return idCounter;
-        } else {
-            int num = currID.intValue();
-            if (num > idCounter)
-                idCounter = num;
-
-            return currID;
-        }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        SpaService that = (SpaService) o;
-        return id == that.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }

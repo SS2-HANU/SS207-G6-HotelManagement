@@ -6,9 +6,13 @@ import domainapp.basics.model.meta.DAssoc;
 import domainapp.basics.model.meta.DAttr;
 import domainapp.basics.model.meta.DClass;
 import domainapp.basics.model.meta.DOpt;
+import domainapp.basics.model.meta.Select;
+import hanu.edu.hotelsystem.services.Delivery.model.RoomDelivery;
 import hanu.edu.hotelsystem.services.Room.model.Room;
 import hanu.edu.hotelsystem.services.Reservation.model.Reservation;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Objects;
 
 
@@ -33,6 +37,16 @@ public class RoomOrder {
             associate=@DAssoc.Associate(type= Room.class,cardMin=1,cardMax=1))
     private Room room;
 
+    @DAttr(name="roomDeliveries",type= DAttr.Type.Collection,
+            serialisable=false,optional=false,
+            filter=@Select(clazz= RoomDelivery.class))
+    @DAssoc(ascName="room-order-has-room-delivery",role="room-order",
+            ascType= DAssoc.AssocType.One2Many,endType= DAssoc.AssocEndType.One,
+            associate=@DAssoc.Associate(type=RoomDelivery.class,
+                    cardMin=0,cardMax=25))
+    private Collection<RoomDelivery> roomDeliveries;
+    private int roomDeliveryCount; 
+
     @DAttr(name = "price", type = DAttr.Type.Long, optional = false)
     private Long price;
 
@@ -52,6 +66,9 @@ public class RoomOrder {
         this.reservation= reservation;
         this.price = price;
         this.room = room;
+        
+        roomDeliveries = new ArrayList<>();
+        roomDeliveryCount = 0;
     }
 
     private static int nextId(Integer currID) {
@@ -116,5 +133,81 @@ public class RoomOrder {
                 ", room=" + room +
                 ", price=" + price +
                 '}';
+    }
+
+    @DOpt(type = DOpt.Type.LinkAdder)
+    public boolean addRoomDelivery(RoomDelivery order) {
+        if (!this.roomDeliveries.contains(order)) {
+            roomDeliveries.add(order);
+        }
+        // no other attributes changed
+        return false;
+    }
+
+    @DOpt(type = DOpt.Type.LinkAdderNew)
+    public boolean addNewRoomDelivery(RoomDelivery order) {
+        roomDeliveries.add(order);
+        roomDeliveryCount++;
+        // no other attributes changed
+        return false;
+    }
+
+    @DOpt(type = DOpt.Type.LinkAdder)
+    public boolean addRoomDelivery(Collection<RoomDelivery> orders) {
+        for (RoomDelivery o : orders) {
+            if (!this.roomDeliveries.contains(o)) {
+                this.roomDeliveries.add(o);
+            }
+        }
+
+        // no other attributes changed
+        return false;
+    }
+
+    @DOpt(type = DOpt.Type.LinkAdderNew)
+    public boolean addNewRoomDelivery(Collection<RoomDelivery> orders) {
+        this.roomDeliveries.addAll(orders);
+        roomDeliveryCount += orders.size();
+
+        // no other attributes changed
+        return false;
+    }
+
+    @DOpt(type = DOpt.Type.LinkRemover)
+    //only need to do this for reflexive association: @MemberRef(name="students")
+    public boolean removeRoomDelivery(RoomDelivery o) {
+        boolean removed = roomDeliveries.remove(o);
+
+        if (removed) {
+            roomDeliveryCount--;
+        }
+
+        // no other attributes changed
+        return false;
+    }
+
+    @DOpt(type = DOpt.Type.Setter)
+    public void setRoomDelivery(Collection<RoomDelivery> orders) {
+        this.roomDeliveries = orders;
+
+        roomDeliveryCount = orders.size();
+    }
+
+    /**
+     * @effects return <tt>orderCount</tt>
+     */
+    @DOpt(type = DOpt.Type.LinkCountGetter)
+    public Integer getRoomDeliveryCount() {
+        return roomDeliveryCount;
+    }
+
+    @DOpt(type = DOpt.Type.LinkCountSetter)
+    public void setRoomDeliveryCount(int count) {
+        roomDeliveryCount = count;
+    }
+
+    @DOpt(type = DOpt.Type.Getter)
+    public Collection<RoomDelivery> getRoomDeliverys() {
+        return roomDeliveries;
     }
 }

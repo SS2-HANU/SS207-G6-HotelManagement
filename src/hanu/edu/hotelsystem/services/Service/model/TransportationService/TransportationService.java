@@ -6,6 +6,7 @@ import domainapp.basics.model.meta.DAttr;
 import domainapp.basics.model.meta.DClass;
 import domainapp.basics.model.meta.DOpt;
 import domainapp.basics.model.meta.Select;
+import hanu.edu.hotelsystem.services.Service.model.Service;
 import hanu.edu.hotelsystem.services.ServiceOrder.model.TransportationServiceOrder;
 
 import java.util.ArrayList;
@@ -13,16 +14,12 @@ import java.util.Collection;
 import java.util.Objects;
 
 @DClass(schema = "hotelsystem")
-public class TransportationService {
-    @DAttr(name = "id", id = true, auto = true, length = 6, mutable = false, type = DAttr.Type.Integer)
-    private int id;
-    private static int idCounter;
+public class TransportationService extends Service {
 
-    @DAttr(name = "vehicle", type = DAttr.Type.String, length = 30, optional = false)
+
+    @DAttr(name = "vehicle", type = DAttr.Type.String, length = 30, optional = false, cid = true)
     private String vehicle;
 
-    @DAttr(name = "price", type = DAttr.Type.Long, optional = false)
-    private Long price;
 
     @DAttr(name="transportationServiceOrders",type= DAttr.Type.Collection,
             serialisable=false,optional=false,
@@ -44,27 +41,24 @@ public class TransportationService {
     }
 
     @DOpt(type = DOpt.Type.DataSourceConstructor)
-    public TransportationService(@AttrRef("id") Integer id, @AttrRef("type") String vehicle,
+    public TransportationService(@AttrRef("id") Integer id, @AttrRef("vehicle") String vehicle,
                       @AttrRef("price") Long price) {
-        this.id = nextID(id);
+        super(id, price);
         this.vehicle = vehicle;
-        setPrice(price);
 
         transportationServiceOrders = new ArrayList<>();
         orderCount = 0;
     }
 
-    public int getId() {
-        return id;
+
+    public String getVehicle() {
+        return vehicle;
     }
 
-    public Long getPrice() {
-        return price;
+    public void setVehicle(String vehicle) {
+        this.vehicle = vehicle;
     }
 
-    public void setPrice(Long price) {
-        this.price = price;
-    }
     @DOpt(type=DOpt.Type.LinkAdder)
     public boolean addTransportationServiceOrder(TransportationServiceOrder order) {
         if (!this.transportationServiceOrders.contains(order)) {
@@ -142,39 +136,4 @@ public class TransportationService {
         this.transportationServiceOrders = transportationServiceOrders;
     }
 
-    private static int nextID(Integer currID) {
-        if (currID == null) {
-            idCounter++;
-            return idCounter;
-        } else {
-            int num = currID.intValue();
-            if (num > idCounter)
-                idCounter = num;
-
-            return currID;
-        }
-    }
-
-    public String getVehicle() {
-        return vehicle;
-    }
-
-    public void setVehicle(String vehicle) {
-        this.vehicle = vehicle;
-    }
-
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        TransportationService that = (TransportationService) o;
-        return id == that.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }

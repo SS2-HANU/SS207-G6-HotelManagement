@@ -32,13 +32,14 @@ public class TransportationServiceOrder extends ServiceOrder{
 
     @DOpt(type = DOpt.Type.ObjectFormConstructor)
     public TransportationServiceOrder(@AttrRef("createdAt") Date createdAt,
-                           @AttrRef("roomService") TransportationService transportationService,
-                           @AttrRef("distance") Integer distance,
-                           @AttrRef("quantity") Integer quantity,
-                           @AttrRef("reservation") Reservation reservation,
-                           @AttrRef("employee") Employee employee
+                                      @AttrRef("transportationService") TransportationService transportationService,
+                                      @AttrRef("distance") Integer distance,
+                                      @AttrRef("quantity") Integer quantity,
+                                      @AttrRef("reservation") Reservation reservation,
+                                      @AttrRef("rating") Integer rating,
+                                      @AttrRef("employee") Employee employee
     ){
-        this(null, createdAt,transportationService,distance, quantity, reservation,employee);
+        this(null, createdAt,transportationService,distance, quantity, reservation,rating, employee);
     }
 
     @DOpt(type=DOpt.Type.DataSourceConstructor)
@@ -48,10 +49,11 @@ public class TransportationServiceOrder extends ServiceOrder{
                                       @AttrRef("distance") Integer distance,
                                       @AttrRef("quantity") Integer quantity,
                                       @AttrRef("reservation") Reservation reservation,
+                                      @AttrRef("rating") Integer rating,
                                       @AttrRef("employee") Employee employee
 
     ) throws ConstraintViolationException {
-        super(createdAt, quantity, reservation, employee);
+        super(createdAt, quantity, reservation,rating, employee);
         this.code = nextCode(code);
         this.transportationService = transportationService;
         this.distance = distance;

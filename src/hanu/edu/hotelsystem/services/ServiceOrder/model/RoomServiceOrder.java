@@ -32,9 +32,10 @@ public class RoomServiceOrder extends ServiceOrder{
                             @AttrRef("roomService") RoomService roomService,
                             @AttrRef("quantity") Integer quantity,
                             @AttrRef("reservation") Reservation reservation,
+                            @AttrRef("rating") Integer rating,
                             @AttrRef("employee") Employee employee
     ){
-        this(null, createdAt,roomService, quantity, reservation,employee);
+        this(null, createdAt,roomService, quantity, reservation,rating,employee);
     }
 
     @DOpt(type=DOpt.Type.DataSourceConstructor)
@@ -43,10 +44,11 @@ public class RoomServiceOrder extends ServiceOrder{
                             @AttrRef("roomService") RoomService roomService,
                             @AttrRef("quantity") Integer quantity,
                             @AttrRef("reservation") Reservation reservation,
+                            @AttrRef("rating") Integer rating,
                             @AttrRef("employee") Employee employee
 
                             ) throws ConstraintViolationException {
-        super(createdAt, quantity, reservation, employee);
+        super(createdAt, quantity, reservation,rating, employee);
         this.code = nextCode(code);
         setRoomService(roomService);
     }

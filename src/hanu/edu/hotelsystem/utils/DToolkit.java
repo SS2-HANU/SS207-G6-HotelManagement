@@ -14,6 +14,7 @@ public class DToolkit {
   
   public static final Date MIN_DATE = getTime(1,0,1900);
 
+  public static final Date now = new Date();
 
   private DToolkit() {}
 
@@ -29,5 +30,9 @@ public class DToolkit {
     Calendar cal = Calendar.getInstance();
     cal.set(y, m, d);
     return cal.getTime();
+  }
+
+  public static Date getNow() {
+    return now;
   }
 }
