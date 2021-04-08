@@ -122,4 +122,12 @@ public class RestaurantService extends Service {
     public void setRestaurantServiceOrders(Collection<RestaurantServiceOrder> restaurantServiceOrders) {
         this.restaurantServiceOrders = restaurantServiceOrders;
     }
+
+    public String getDishName() {
+        return dishName;
+    }
+
+    public void setDishName(String dishName) {
+        this.dishName = dishName;
+    }
 }

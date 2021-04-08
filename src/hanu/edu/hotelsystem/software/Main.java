@@ -3,6 +3,9 @@ package hanu.edu.hotelsystem.software;
 import domainapp.basics.exceptions.DataSourceException;
 import domainapp.software.SoftwareFactory;
 import domainapp.softwareimpl.DomSoftware;
+import hanu.edu.hotelsystem.services.Delivery.model.Delivery;
+import hanu.edu.hotelsystem.services.Delivery.model.InplaceDelivery;
+import hanu.edu.hotelsystem.services.Delivery.model.RoomDelivery;
 import hanu.edu.hotelsystem.services.Department.model.Department;
 import hanu.edu.hotelsystem.services.Person.model.Address;
 import hanu.edu.hotelsystem.services.Person.model.Customer;
@@ -11,9 +14,12 @@ import hanu.edu.hotelsystem.services.Person.model.Person;
 import hanu.edu.hotelsystem.services.Reservation.model.Reservation;
 import hanu.edu.hotelsystem.services.Room.model.Room;
 import hanu.edu.hotelsystem.services.RoomOrder.model.RoomOrder;
+import hanu.edu.hotelsystem.services.Service.model.RestaurantService;
 import hanu.edu.hotelsystem.services.Service.model.RoomService.RoomService;
+import hanu.edu.hotelsystem.services.Service.model.Service;
 import hanu.edu.hotelsystem.services.Service.model.SpaService.SpaService;
 import hanu.edu.hotelsystem.services.Service.model.TransportationService.TransportationService;
+import hanu.edu.hotelsystem.services.ServiceOrder.model.RestaurantServiceOrder;
 import hanu.edu.hotelsystem.services.ServiceOrder.model.RoomServiceOrder;
 import hanu.edu.hotelsystem.services.ServiceOrder.model.ServiceOrder;
 import hanu.edu.hotelsystem.services.ServiceOrder.model.SpaServiceOrder;
@@ -35,21 +41,27 @@ public class Main {
   public static void main(String[] args){
     // 1. initialise the model
     Class[] model = {
+            Address.class,
             Person.class,
             Employee.class,
             Department.class,
-            Address.class,
             Customer.class,
-            ServiceOrder.class,
             Reservation.class,
             RoomOrder.class,
             Room.class,
+            Service.class,
+            ServiceOrder.class,
             RoomService.class,
             RoomServiceOrder.class,
             SpaService.class,
             SpaServiceOrder.class,
             TransportationService.class,
-            TransportationServiceOrder.class
+            TransportationServiceOrder.class,
+            RestaurantService.class,
+            RestaurantServiceOrder.class,
+            Delivery.class,
+            InplaceDelivery.class,
+            RoomDelivery.class,
     };
 
     // delete Domain Model

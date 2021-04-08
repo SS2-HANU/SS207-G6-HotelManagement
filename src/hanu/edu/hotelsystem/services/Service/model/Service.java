@@ -17,7 +17,6 @@ public abstract class Service {
     private Long price;
 
     @DOpt(type = DOpt.Type.ObjectFormConstructor)
-    @DOpt(type = DOpt.Type.RequiredConstructor)
     public Service(@AttrRef("price") Long price ) {
         this(null, price);
     }
