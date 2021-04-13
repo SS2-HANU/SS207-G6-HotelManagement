@@ -11,7 +11,6 @@ import hanu.edu.hotelsystem.services.ServiceOrder.model.SpaServiceOrder;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Objects;
 
 @DClass(schema = "hotelsystem")
 public class SpaService extends Service {

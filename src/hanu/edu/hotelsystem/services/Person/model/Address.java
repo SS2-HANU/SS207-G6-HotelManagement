@@ -25,7 +25,7 @@ public class Address {
     private int id;
     private static int idCounter;
 
-    @DAttr(name=A_name,type= DAttr.Type.String,length=20,optional=false, cid = true)
+    @DAttr(name="name",type= DAttr.Type.String,length=20,optional=false, cid = true)
     private String name;
 
     @DAttr(name="person",type= DAttr.Type.Domain,serialisable=false)

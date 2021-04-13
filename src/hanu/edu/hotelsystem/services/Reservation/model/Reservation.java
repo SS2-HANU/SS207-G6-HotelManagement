@@ -40,7 +40,7 @@ public class Reservation {
 
     @DAttr(name = "customer", type = DAttr.Type.Domain, length = 20, optional = false)
     @DAssoc(ascName = "customer-has-reservation", role = "reservation",
-            ascType = DAssoc.AssocType.One2One, endType = DAssoc.AssocEndType.One,
+            ascType = DAssoc.AssocType.One2Many, endType = DAssoc.AssocEndType.Many,
             associate = @DAssoc.Associate(type = Customer.class, cardMin = 1, cardMax = 1))
     private Customer customer;
 
@@ -93,31 +93,29 @@ public class Reservation {
         setEndDate(endDate);
         this.customer = customer;
 
-        stateHist = new StateHistory<>();
-
         serviceOrders = new ArrayList<>();
         serviceOrderCount = 0;
 
         roomOrders = new ArrayList<>();
         roomOrderCount = 0;
 
+        stateHist = new StateHistory<>();
         updateStatus();
-//        System.out.println("UPDATED");
-//        System.out.println(this.stateHist.get(AttributeName_Status).toString());
     }
 
     @DOpt(type = DOpt.Type.DerivedAttributeUpdater)
     @AttrRef(value = AttributeName_Status)
     public void updateStatus() {
-        Status status;
-        if (endDate.before(DToolkit.getNow())) {
-            status = Status.COMPLETED;
-        } else if (startDate.before(DToolkit.getNow()) && endDate.after(DToolkit.getNow()) ){
-            status = Status.SERVING;
-        } else {
-          status = Status.REGISTERED;
+        if (startDate != null && endDate != null) {
+            if (endDate.before(DToolkit.getNow())) {
+                status = Status.COMPLETED;
+            } else if (startDate.before(DToolkit.getNow()) && endDate.after(DToolkit.getNow())) {
+                status = Status.SERVING;
+            } else {
+                status = Status.REGISTERED;
+            }
+            stateHist.put(AttributeName_Status, status);
         }
-        stateHist.put(AttributeName_Status, status);
     }
 
     public Status getStatus() {
@@ -180,7 +178,6 @@ public class Reservation {
     }
 
     @DOpt(type = DOpt.Type.LinkRemover)
-    //only need to do this for reflexive association: @MemberRef(name="students")
     public boolean removeServiceOrder(ServiceOrder o) {
         boolean removed = serviceOrders.remove(o);
 
@@ -199,6 +196,11 @@ public class Reservation {
         serviceOrderCount = orders.size();
     }
 
+    @DOpt(type = DOpt.Type.Getter)
+    public Collection<ServiceOrder> getServiceOrders() {
+        return serviceOrders;
+    }
+
     /**
      * @effects return <tt>orderCount</tt>
      */
@@ -212,11 +214,7 @@ public class Reservation {
         serviceOrderCount = count;
     }
 
-    @DOpt(type = DOpt.Type.Getter)
-    public Collection<ServiceOrder> getServiceOrders() {
-        return serviceOrders;
-    }
-
+    @DOpt(type = DOpt.Type.LinkAdder)
     public boolean addRoomOrder(RoomOrder order) {
         if (!this.roomOrders.contains(order)) {
             roomOrders.add(order);
@@ -275,6 +273,11 @@ public class Reservation {
         roomOrderCount = orders.size();
     }
 
+    @DOpt(type = DOpt.Type.Getter)
+    public Collection<RoomOrder> getRoomOrders() {
+        return roomOrders;
+    }
+
     /**
      * @effects return <tt>orderCount</tt>
      */
@@ -288,10 +291,6 @@ public class Reservation {
         roomOrderCount = count;
     }
 
-    @DOpt(type = DOpt.Type.Getter)
-    public Collection<RoomOrder> getRoomOrders() {
-        return roomOrders;
-    }
 
     private static int nextID(Integer currID) {
         if (currID == null) {
@@ -329,14 +328,14 @@ public class Reservation {
         if (startDate.before(DToolkit.MIN_DATE)) {
             throw new ConstraintViolationException(DExCode.INVALID_START_DATE, startDate);
         }
-        this.startDate = startDate;
+//        this.startDate = startDate;
         setStartDate(startDate, false);
     }
 
     public void setStartDate(Date startDate, boolean updateStatus) {
         this.startDate = startDate;
         if(updateStatus)
-        updateStatus();
+            updateStatus();
     }
 
     public Date getEndDate() {

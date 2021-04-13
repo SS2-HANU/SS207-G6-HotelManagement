@@ -23,22 +23,50 @@ public class RoomDelivery extends Delivery{
     @DAttr(name = "servedAt", type = DAttr.Type.Date, length = 10, optional = false, format= DAttr.Format.Date)
     private Date servedAt;
 
+//    @DOpt(type = DOpt.Type.ObjectFormConstructor)
+//    protected RoomDelivery(
+//            @AttrRef("roomOrder") RoomOrder roomOrder,
+//            @AttrRef("servedAt") Date servedAt,
+//            @AttrRef("restaurantServiceOrder") RestaurantServiceOrder restaurantServiceOrder){
+//        this(null, roomOrder, servedAt, restaurantServiceOrder);
+//    }
+//
+//    @DOpt(type = DOpt.Type.DataSourceConstructor)
+//    protected RoomDelivery(@AttrRef("id") String id,
+//                           @AttrRef("roomOrder") RoomOrder roomOrder,
+//                           @AttrRef("servedAt") Date servedAt,
+//                           @AttrRef("restaurantServiceOrder") RestaurantServiceOrder restaurantServiceOrder)
+//            throws ConstraintViolationException {
+//        super(id, restaurantServiceOrder);
+//        this.roomOrder = roomOrder;
+//        this.servedAt = servedAt;
+//    }
+
     @DOpt(type = DOpt.Type.ObjectFormConstructor)
-    protected RoomDelivery(
+    @DOpt(type = DOpt.Type.RequiredConstructor)
+    public RoomDelivery(
+            @AttrRef("roomOrder") RoomOrder roomOrder,
+            @AttrRef("servedAt") Date servedAt){
+        this(null,roomOrder, servedAt, null);
+    }
+
+    @DOpt(type = DOpt.Type.ObjectFormConstructor)
+    public RoomDelivery(
             @AttrRef("roomOrder") RoomOrder roomOrder,
             @AttrRef("servedAt") Date servedAt,
             @AttrRef("restaurantServiceOrder") RestaurantServiceOrder restaurantServiceOrder){
-        this(null, roomOrder, servedAt, restaurantServiceOrder);
-    }
+        this(null,roomOrder, servedAt, restaurantServiceOrder);
+}
 
     @DOpt(type = DOpt.Type.DataSourceConstructor)
-    protected RoomDelivery(@AttrRef("id") String id,
-                           @AttrRef("roomOrder") RoomOrder roomOrder,
-                           @AttrRef("servedAt") Date servedAt,
-                           @AttrRef("restaurantServiceOrder") RestaurantServiceOrder restaurantServiceOrder)
-            throws ConstraintViolationException {
+    public RoomDelivery(@AttrRef("id") String id,
+                        @AttrRef("roomOrder") RoomOrder roomOrder,
+                        @AttrRef("servedAt") Date servedAt){
+        this(id, roomOrder, servedAt, null);
+    }
+    public RoomDelivery(String id, RoomOrder roomOrder, Date servedAt, RestaurantServiceOrder restaurantServiceOrder){
         super(id, restaurantServiceOrder);
-        this.roomOrder = roomOrder;
+        this.roomOrder = roomOrder ;
         this.servedAt = servedAt;
     }
 

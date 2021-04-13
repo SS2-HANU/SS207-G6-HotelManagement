@@ -31,7 +31,7 @@ public abstract class Person {
     @DAttr(name = A_id, id = true, auto = true, length = 6, mutable = false, type = DAttr.Type.Integer)
     private int id;
 
-    private static int idCounter;
+    private static int idCounter = 0;
 
     @DAttr(name = A_name, type = DAttr.Type.String, length = 30, optional = false, cid = true)
     private String name;
@@ -158,6 +158,18 @@ public abstract class Person {
                     idCounter = maxIdVal;
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", gender=" + gender +
+                ", dob=" + dob +
+                ", address=" + address +
+                ", phoneNum='" + phoneNum + '\'' +
+                '}';
     }
 }
 

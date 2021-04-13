@@ -7,26 +7,36 @@ import domainapp.basics.model.meta.DClass;
 import domainapp.basics.model.meta.DOpt;
 import hanu.edu.hotelsystem.services.ServiceOrder.model.RestaurantServiceOrder;
 
-@DClass(schema = "hotelsystem" )
-public class InplaceDelivery extends Delivery{
+@DClass(schema = "hotelsystem")
+public class InplaceDelivery extends Delivery {
     @DAttr(name = "tableNo", type = DAttr.Type.Integer, optional = false, min = 1, max = 100)
     private Integer tableNo;
 
     @DOpt(type = DOpt.Type.ObjectFormConstructor)
-    protected InplaceDelivery(
+    public InplaceDelivery(
             @AttrRef("tableNo") Integer tableNo,
-            @AttrRef("restaurantServiceOrder") RestaurantServiceOrder restaurantServiceOrder){
-        this(null,tableNo, restaurantServiceOrder);
+            @AttrRef("restaurantServiceOrder") RestaurantServiceOrder restaurantServiceOrder) {
+        this(null, tableNo, restaurantServiceOrder);
+    }
+
+    @DOpt(type = DOpt.Type.ObjectFormConstructor)
+    @DOpt(type = DOpt.Type.RequiredConstructor)
+    public InplaceDelivery(
+            @AttrRef("tableNo") Integer tableNo) {
+        this(null, tableNo, null);
     }
 
     @DOpt(type = DOpt.Type.DataSourceConstructor)
-    protected InplaceDelivery(@AttrRef("id") String id,
-                              @AttrRef("tableNo") Integer tableNo,
-                              @AttrRef("restaurantServiceOrder") RestaurantServiceOrder restaurantServiceOrder)
-            throws ConstraintViolationException {
-        super(id,restaurantServiceOrder);
+    public InplaceDelivery(@AttrRef("id") String id,
+                           @AttrRef("tableNo") Integer tableNo) {
+        this(id, tableNo, null);
+    }
+
+    public InplaceDelivery(String id, Integer tableNo, RestaurantServiceOrder restaurantServiceOrder) {
+        super(id, restaurantServiceOrder);
         this.tableNo = tableNo;
     }
+
 
     public Integer getTableNo() {
         return tableNo;

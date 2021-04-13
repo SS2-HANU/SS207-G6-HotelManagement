@@ -27,7 +27,7 @@ public abstract class ServiceOrder {
     @DAttr(name = "quantity", type = DAttr.Type.Integer, optional = false, min = 1)
     private Integer quantity;
 
-//    @DAttr(name = "totalPrice", auto = true, type = DAttr.Type.Long, optional = false)
+//    @DAttr(name = "totalPrice", type = DAttr.Type.Long, optional = false)
 //    private Long totalPrice;
 
     @DAttr(name = "rating", type = DAttr.Type.Integer, optional = false, min = 1, max = 10)
@@ -49,6 +49,7 @@ public abstract class ServiceOrder {
     @DOpt(type=DOpt.Type.ObjectFormConstructor)
     public ServiceOrder(@AttrRef("createdAt") Date createdAt,
                         @AttrRef("quantity") Integer quantity,
+//                        @AttrRef("totalPrice") Long totalPrice,
                         @AttrRef("reservation") Reservation reservation,
                         @AttrRef("rating") Integer rating,
                         @AttrRef("employee") Employee employee){
@@ -59,12 +60,14 @@ public abstract class ServiceOrder {
     public ServiceOrder(@AttrRef("id") Integer id,
                         @AttrRef("createdAt") Date createdAt,
                         @AttrRef("quantity") Integer quantity,
+//                        @AttrRef("totalPrice") Long totalPrice,
                         @AttrRef("reservation") Reservation reservation,
                         @AttrRef("rating") Integer rating,
                         @AttrRef("employee") Employee employee) throws ConstraintViolationException {
         this.id = nextId(id);
         this.quantity = quantity;
         this.createdAt = createdAt;
+//        this.totalPrice = totalPrice;
         this.reservation= reservation;
         this.rating = rating;
         this.employee = employee;
@@ -102,6 +105,14 @@ public abstract class ServiceOrder {
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
+
+//    public Long getTotalPrice() {
+//        return totalPrice;
+//    }
+//
+//    public void setTotalPrice(Long totalPrice) {
+//        this.totalPrice = totalPrice;
+//    }
 
     public Integer getRating() {
         return rating;

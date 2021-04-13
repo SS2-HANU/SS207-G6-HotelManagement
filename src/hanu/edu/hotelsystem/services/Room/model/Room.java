@@ -57,18 +57,17 @@ public class Room {
     private static final Map<Tuple, Integer> currNums = new LinkedHashMap<>();
 
     @DOpt(type=DOpt.Type.ObjectFormConstructor)
-    @DOpt(type=DOpt.Type.RequiredConstructor)
     public Room(
             @AttrRef("floorNum") Integer floorNum,
             @AttrRef("roomType") RoomType roomType) throws ConstraintViolationException{
-        this(null, null, floorNum, roomType );
+        this(null, floorNum,null, roomType );
     }
 
     @DOpt(type = DOpt.Type.DataSourceConstructor)
     public Room(
             @AttrRef("id") Integer id,
-            @AttrRef("name") String name,
             @AttrRef("floorNum") Integer floorNum,
+            @AttrRef("name") String name,
             @AttrRef("roomType") RoomType roomType
     ) throws ConstraintViolationException {
         this.id = nextId(id);
@@ -188,6 +187,7 @@ public class Room {
         this.roomType = roomType;
     }
 
+    @DOpt(type=DOpt.Type.LinkAdder)
     public boolean addRoomOrder(RoomOrder order) {
         if (!this.roomOrders.contains(order)) {
             roomOrders.add(order);

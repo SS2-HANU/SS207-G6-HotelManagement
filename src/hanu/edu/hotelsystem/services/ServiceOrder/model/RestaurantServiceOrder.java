@@ -8,7 +8,7 @@ import domainapp.basics.model.meta.DClass;
 import domainapp.basics.model.meta.DOpt;
 import hanu.edu.hotelsystem.services.Delivery.model.Delivery;
 import hanu.edu.hotelsystem.services.Person.model.Customer;
-import hanu.edu.hotelsystem.services.Service.model.RestaurantService;
+import hanu.edu.hotelsystem.services.Service.model.RestaurantService.RestaurantService;
 
 import java.util.Date;
 import java.util.Objects;
@@ -31,7 +31,7 @@ public class RestaurantServiceOrder {
 
     @DAttr(name = "restaurantService", type = DAttr.Type.Domain, length = 20, optional = false)
     @DAssoc(ascName = "restaurant-service-has-restaurant-service-order", role = "restaurant-service-order",
-            ascType = DAssoc.AssocType.One2One, endType = DAssoc.AssocEndType.One,
+            ascType = DAssoc.AssocType.One2Many, endType = DAssoc.AssocEndType.Many,
             associate = @DAssoc.Associate(type = RestaurantService.class, cardMin = 1, cardMax = 1))
     private RestaurantService restaurantService;
 
@@ -44,7 +44,7 @@ public class RestaurantServiceOrder {
     @DAttr(name = "quantity", type = DAttr.Type.Integer, optional = false, min = 1, max = 10)
     private Integer quantity;
 
-    @DAttr(name = "totalPrice", type = DAttr.Type.Long, optional = false, min = 1, max = 10)
+    @DAttr(name = "totalPrice", type = DAttr.Type.Long, optional = false)
     private Long totalPrice;
 
     @DOpt(type = DOpt.Type.ObjectFormConstructor)
@@ -54,6 +54,7 @@ public class RestaurantServiceOrder {
                                   @AttrRef("quantity") Integer quantity,
                                   @AttrRef("delivery") Delivery delivery,
                                   @AttrRef("totalPrice") Long totalPrice){
+        this(null, customer,createdAt, restaurantService, quantity,delivery,totalPrice);
 
     }
     @DOpt(type = DOpt.Type.DataSourceConstructor)
@@ -65,6 +66,7 @@ public class RestaurantServiceOrder {
                                   @AttrRef("delivery") Delivery delivery,
                                   @AttrRef("totalPrice") Long totalPrice)
             throws ConstraintViolationException {
+        this.id = nextID(id);
         this.customer = customer;
         this.createdAt = createdAt;
         this.restaurantService = restaurantService;

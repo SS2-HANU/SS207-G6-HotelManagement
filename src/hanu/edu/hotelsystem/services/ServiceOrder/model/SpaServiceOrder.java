@@ -8,6 +8,7 @@ import domainapp.basics.model.meta.DClass;
 import domainapp.basics.model.meta.DOpt;
 import hanu.edu.hotelsystem.services.Person.model.Employee;
 import hanu.edu.hotelsystem.services.Reservation.model.Reservation;
+import hanu.edu.hotelsystem.services.Service.model.Service;
 import hanu.edu.hotelsystem.services.Service.model.SpaService.SpaService;
 
 import java.util.Date;
@@ -84,4 +85,5 @@ public class SpaServiceOrder extends ServiceOrder {
             return code;
         }
     }
+
 }
