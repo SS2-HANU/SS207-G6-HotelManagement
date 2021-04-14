@@ -32,26 +32,25 @@ public class TransportationServiceOrder extends ServiceOrder{
 
     @DOpt(type = DOpt.Type.ObjectFormConstructor)
     public TransportationServiceOrder(@AttrRef("createdAt") Date createdAt,
-                                      @AttrRef("transportationService") TransportationService transportationService,
-                                      @AttrRef("distance") Integer distance,
                                       @AttrRef("quantity") Integer quantity,
                                       @AttrRef("reservation") Reservation reservation,
                                       @AttrRef("rating") Integer rating,
-                                      @AttrRef("employee") Employee employee
-    ){
-        this(null, createdAt,transportationService,distance, quantity, reservation,rating, employee);
+                                      @AttrRef("employee") Employee employee,
+                                      @AttrRef("transportationService") TransportationService transportationService,
+                                      @AttrRef("distance") Integer distance){
+        this(createdAt, quantity, 0L, reservation, rating, employee, transportationService, distance, null);
     }
 
     @DOpt(type=DOpt.Type.DataSourceConstructor)
-    public TransportationServiceOrder(@AttrRef("code") String code,
-                                      @AttrRef("createdAt") Date createdAt,
-                                      @AttrRef("transportationService") TransportationService transportationService,
-                                      @AttrRef("distance") Integer distance,
+    public TransportationServiceOrder(@AttrRef("createdAt") Date createdAt,
                                       @AttrRef("quantity") Integer quantity,
+                                      @AttrRef("totalPrice") Long totalPrice,
                                       @AttrRef("reservation") Reservation reservation,
                                       @AttrRef("rating") Integer rating,
-                                      @AttrRef("employee") Employee employee
-
+                                      @AttrRef("employee") Employee employee,
+                                      @AttrRef("transportationService") TransportationService transportationService,
+                                      @AttrRef("distance") Integer distance,
+                                      @AttrRef("code") String code
     ) throws ConstraintViolationException {
         super(createdAt, quantity, reservation,rating, employee);
         this.code = nextCode(code);
@@ -88,6 +87,7 @@ public class TransportationServiceOrder extends ServiceOrder{
 
     public void setTransportationService(TransportationService transportationService) {
         this.transportationService = transportationService;
+        computeTotalPrice();
     }
 
     public Integer getDistance() {
@@ -96,5 +96,16 @@ public class TransportationServiceOrder extends ServiceOrder{
 
     public void setDistance(Integer distance) {
         this.distance = distance;
+    }
+
+
+
+    @Override
+    Long computeTotalPrice() {
+        if (transportationService != null)
+            totalPrice = transportationService.getPrice() * getQuantity() * getDistance();
+        else
+            totalPrice = 0L;
+        return totalPrice;
     }
 }

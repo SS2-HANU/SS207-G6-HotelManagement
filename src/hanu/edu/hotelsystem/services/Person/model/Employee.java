@@ -194,7 +194,6 @@ public class Employee extends Person {
 
         if (removed) {
             orderCount--;
-
             computeAverageRating();
         }
         // no other attributes changed
@@ -253,13 +252,12 @@ public class Employee extends Person {
      */
     private void computeAverageRating() {
         if (orderCount > 0) {
-            double totalRanking = 0d;
+            double totalRating = 0d;
             for (ServiceOrder s : serviceOrders) {
-                totalRanking += s.getRating();
+                totalRating += s.getRating();
             }
-            averageRating = Math.round(totalRanking / orderCount);
-
-
+            totalRating = Math.round(totalRating * 100) ;
+            averageRating = totalRating / (100 * orderCount);
         } else {
             averageRating = 0;
         }
@@ -273,10 +271,6 @@ public class Employee extends Person {
             star = 4;
         else
             star = 5;
-    }
-
-    public double getAverageRanking() {
-        return averageRating;
     }
 
     @Override

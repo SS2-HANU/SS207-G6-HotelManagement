@@ -78,7 +78,7 @@ public class Main {
         createAddress(sw);
 //        createCustomer(sw);
 //        createReservation(sw);
-       createDepartment(sw);
+        createDepartment(sw);
 //        createEmployee(sw);
 //        createRoom(sw);
 
@@ -126,17 +126,16 @@ public class Main {
         sw.addObject(Address.class, address4);
     }
 
-//    private static void createCustomer(DomSoftware sw) throws DataSourceException {
-//        Address address = sw.retrieveObjectById(Address.class,
-//                1);
-//        assert address != null;
-//
-//        Date dob = Toolkit.getDateZeroTime(8, 8, 2000);
-//
-//        Customer customer = new Customer("C1","Nguyen Thi Thuy Duong", Gender.Female, dob, address, "0969696969");
-//        sw.addObject(Customer.class, customer);
-//    }
-//
+    private static void createCustomer(DomSoftware sw) throws DataSourceException {
+        Address address = sw.retrieveObjectById(Address.class, 1);
+        assert address != null;
+
+        Date dob = Toolkit.getDateZeroTime(8, 8, 2000);
+
+        Customer customer = new Customer("Nguyen Thi Thuy Duong", Gender.Female, dob, address, "0969696969");
+        sw.addObject(Customer.class, customer);
+    }
+
 //    private static void createReservation(DomSoftware sw) throws DataSourceException {
 //
 //        Customer customer = sw.retrieveObjectById(Customer.class, 1);
@@ -156,24 +155,22 @@ public class Main {
         sw.addObject(Department.class, department);
     }
 
-//    private static void createEmployee(DomSoftware sw) throws DataSourceException {
-//        Department department = sw.retrieveObjectById(Department.class, 1);
-//        Address address = sw.retrieveObjectById(Address.class, 2);
-//
-//        assert department != null;
-//        assert address != null;
-//
-//        Employee employee = new Employee("Tang Ba Minh", Gender.Male, new Date(), address, "0904842084", "tangbamiinh@gmail.com", 1_000_000_000L, department);
-//
-//        sw.addObject(Employee.class, employee);
-//    }
+    private static void createEmployee(DomSoftware sw) throws DataSourceException {
+        Department department = sw.retrieveObjectById(Department.class, 1);
+        Address address = sw.retrieveObjectById(Address.class, 2);
+
+        assert department != null;
+        assert address != null;
+
+        Employee employee = new Employee("Tang Ba Minh", Gender.Male, new Date(), address, "0904842084", "tangbamiinh@gmail.com", 1_000_000_000L, department);
+
+        sw.addObject(Employee.class, employee);
+    }
 
     private static void createRoom(DomSoftware sw) throws DataSourceException{
-        Room room1 = new Room(1,3,null, RoomType.VIP);
+        Room room1 = new Room(3, RoomType.VIP);
         sw.addObject(Room.class, room1);
-
 //        Room room2 = new Room(3, RoomType.VIP);
 //        sw.addObject(Room.class, room2);
-
     }
 }

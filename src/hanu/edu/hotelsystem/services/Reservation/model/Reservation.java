@@ -9,6 +9,7 @@ import domainapp.basics.model.meta.DOpt;
 import domainapp.basics.model.meta.Select;
 import domainapp.basics.util.cache.StateHistory;
 import hanu.edu.hotelsystem.exceptions.DExCode;
+import hanu.edu.hotelsystem.services.Reservation.report.ReservationByStatusReport;
 import hanu.edu.hotelsystem.services.ServiceOrder.model.ServiceOrder;
 import hanu.edu.hotelsystem.services.RoomOrder.model.RoomOrder;
 import hanu.edu.hotelsystem.services.Person.model.Customer;
@@ -22,30 +23,39 @@ import java.util.Objects;
 @DClass(schema = "hotelsystem")
 public class Reservation {
 
-    private static final String AttributeName_Status = "status";
+    public static final String AttributeName_Status = "status";
+    public static final String Attr_ID = "id";
+    public static final String Attr_customer = "customer";
+    public static final String Attr_CreatedAt = "createdAt";
+    public static final String Attr_StartDate = "startDate";
+    public static final String Attr_EndDate = "EndDate";
+    public static final String rptbyStatus = "reservationByStatusReport";
 
 
-    @DAttr(name = "id", id = true, auto = true, length = 6, mutable = false, type = DAttr.Type.Integer)
+    @DAttr(name = Attr_ID, id = true, auto = true, length = 6, mutable = false, type = DAttr.Type.Integer)
     private int id;
     private static int idCounter;
 
-    @DAttr(name = "createdAt", type = DAttr.Type.Date, length = 15, optional = false, format= DAttr.Format.Date, cid = true)
+    @DAttr(name = Attr_CreatedAt, type = DAttr.Type.Date, length = 15, optional = false, format= DAttr.Format.Date, cid = true)
     private Date createdAt;
 
-    @DAttr(name = "startDate", type = DAttr.Type.Date, length = 15, optional = false, format= DAttr.Format.Date)
+    @DAttr(name = Attr_StartDate, type = DAttr.Type.Date, length = 15, optional = false, format= DAttr.Format.Date)
     private Date startDate;
 
-    @DAttr(name = "endDate", type = DAttr.Type.Date, length = 15, optional = false, format= DAttr.Format.Date)
+    @DAttr(name = Attr_EndDate, type = DAttr.Type.Date, length = 15, optional = false, format= DAttr.Format.Date)
     private Date endDate;
 
-    @DAttr(name = "customer", type = DAttr.Type.Domain, length = 20, optional = false, cid = true)
+    @DAttr(name = Attr_customer, type = DAttr.Type.Domain, length = 20, optional = false, cid = true)
     @DAssoc(ascName = "customer-has-reservation", role = "reservation",
             ascType = DAssoc.AssocType.One2Many, endType = DAssoc.AssocEndType.Many,
             associate = @DAssoc.Associate(type = Customer.class, cardMin = 1, cardMax = 1))
     private Customer customer;
 
+    @DAttr(name = "isCancel", type = DAttr.Type.Boolean, length = 5, optional = false)
+    private Boolean isCancel;
+
     @DAttr(name = AttributeName_Status, type = DAttr.Type.Domain, auto = true, length = 8, serialisable = false,
-            mutable = false, optional = false, derivedFrom = {"startDate", "endDate"})
+            mutable = false, optional = false, derivedFrom = {"startDate", "endDate", "isCancel"})
     private Status status;
 
     private StateHistory<String, Object> stateHist;
@@ -73,12 +83,19 @@ public class Reservation {
 
     private int roomOrderCount;
 
+    @DAttr(name=rptbyStatus,type= DAttr.Type.Domain, serialisable=false,
+            // IMPORTANT: set virtual=true to exclude this attribute from the object state
+            // (avoiding the view having to load this attribute's value from data source)
+            virtual=true)
+    private ReservationByStatusReport reservationByStatusReport;
+
     @DOpt(type = DOpt.Type.ObjectFormConstructor)
     public Reservation(@AttrRef("createdAt") Date createdAt,
                        @AttrRef("startDate") Date startDate,
                        @AttrRef("endDate") Date endDate,
-                       @AttrRef("customer") Customer customer) {
-        this(null,createdAt, startDate, endDate, customer);
+                       @AttrRef("customer") Customer customer,
+                       @AttrRef("isCancel") Boolean isCancel) {
+        this(null,createdAt, startDate, endDate, customer, isCancel);
     }
 
     @DOpt(type = DOpt.Type.DataSourceConstructor)
@@ -86,11 +103,12 @@ public class Reservation {
                        @AttrRef("createdAt") Date createdAt,
                        @AttrRef("startDate") Date startDate,
                        @AttrRef("endDate") Date endDate,
-                       @AttrRef("customer") Customer customer) throws ConstraintViolationException {
+                       @AttrRef("customer") Customer customer,
+                       @AttrRef("isCancel") Boolean isCancel) throws ConstraintViolationException {
         this.id = nextID(id);
-        setCreatedAt(createdAt);
-        setStartDate(startDate);
-        setEndDate(endDate);
+        this.createdAt = createdAt;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.customer = customer;
 
         serviceOrders = new ArrayList<>();
@@ -106,14 +124,17 @@ public class Reservation {
     @DOpt(type = DOpt.Type.DerivedAttributeUpdater)
     @AttrRef(value = AttributeName_Status)
     public void updateStatus() {
-        if (startDate != null && endDate != null) {
-            if (endDate.before(DToolkit.getNow())) {
-                status = Status.COMPLETED;
-            } else if (startDate.before(DToolkit.getNow()) && endDate.after(DToolkit.getNow())) {
-                status = Status.SERVING;
-            } else {
-                status = Status.REGISTERED;
-            }
+        if (startDate != null && endDate != null && isCancel != null) {
+            if(!isCancel) {
+                if (endDate.before(DToolkit.getNow())) {
+                    status = Status.COMPLETED;
+                } else if (startDate.before(DToolkit.getNow()) && endDate.after(DToolkit.getNow())) {
+                    status = Status.SERVING;
+                } else {
+                    status = Status.REGISTERED;
+                }
+            } else
+                status = Status.CANCELLED;
             stateHist.put(AttributeName_Status, status);
         }
     }
@@ -325,7 +346,7 @@ public class Reservation {
     }
 
     public void setStartDate(Date startDate) {
-        if (startDate.before(DToolkit.MIN_DATE)) {
+        if (startDate.before(DToolkit.MIN_DATE) || startDate.before(createdAt)) {
             throw new ConstraintViolationException(DExCode.INVALID_START_DATE, startDate);
         }
 //        this.startDate = startDate;
@@ -343,7 +364,7 @@ public class Reservation {
     }
 
     public void setEndDate(Date endDate) {
-        if (endDate.before(DToolkit.MIN_DATE) && endDate.before(startDate))  {
+        if (endDate.before(DToolkit.MIN_DATE) || endDate.before(startDate))  {
             throw new ConstraintViolationException(DExCode.INVALID_END_DATE, endDate);
         }
         this.endDate = endDate;
@@ -356,9 +377,25 @@ public class Reservation {
             updateStatus();
     }
 
+    public void setIsCancel(Boolean cancel) {
+        isCancel = cancel;
+        setIsCancel(isCancel, false);
+    }
+
+    public void setIsCancel(Boolean cancel, boolean updateStatus) {
+        isCancel = cancel;
+        if(updateStatus)
+            updateStatus();
+    }
+
+    public Boolean getIsCancel() {
+        return isCancel;
+    }
+
     public Customer getCustomer() {
         return customer;
     }
+
 
     public void setCustomer(Customer customer) {
         this.customer = customer;

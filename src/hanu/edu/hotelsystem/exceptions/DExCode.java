@@ -36,39 +36,21 @@ import java.text.MessageFormat;
         INVALID_DOB("Date of birth {0} is not a valid date"),
 
         /**
-         * 0: address
+         * 0: created date
          */
-        INVALID_CREATED_DATE("Date is not a valid date"),
+        INVALID_CREATED_DATE("Created date is not a valid date"),
 
         /**
-         * 0: email
+         * 0: start date
          */
-        INVALID_START_DATE("Date is not a valid date"),
+        INVALID_START_DATE("Start date must be set after created date and before end date"),
 
         /**
-         * 0: exam mark
+         * 0: end date
          */
-        INVALID_END_DATE("Date is not a valid date"),
+        INVALID_END_DATE("End date must be set after created date and start date"),
 
-        /**
-         * 0: internal mark
-         */
-        INVALID_INTERNAL_MARK("Internal Mark {0} is not a valid internal mark"),
 
-        /**
-         * 0: semester
-         */
-        INVALID_SEMESTER("Semester {0} is not a valid semester"),
-
-        /**
-         * 0: credits
-         */
-        INVALID_CREDITS("Credits {0} is not a valid credits"),
-
-        /**
-         * 0: name
-         */
-        INVALID_NAME("Name {0} is not a valid name"),
         ;
 
         /**

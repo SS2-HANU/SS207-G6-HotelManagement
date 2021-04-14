@@ -29,29 +29,30 @@ public class SpaServiceOrder extends ServiceOrder {
 
     @DOpt(type = DOpt.Type.ObjectFormConstructor)
     public SpaServiceOrder(@AttrRef("createdAt") Date createdAt,
-                            @AttrRef("spaService") SpaService spaService,
-                            @AttrRef("quantity") Integer quantity,
-                            @AttrRef("reservation") Reservation reservation,
+                           @AttrRef("quantity") Integer quantity,
+                           @AttrRef("reservation") Reservation reservation,
                            @AttrRef("rating") Integer rating,
-                           @AttrRef("employee") Employee employee
+                           @AttrRef("employee") Employee employee,
+                           @AttrRef("spaService") SpaService spaService
     ){
-        this(null, createdAt, spaService, quantity, reservation,rating,employee);
+        this(createdAt, quantity, reservation, rating, employee, null, spaService, 0L );
     }
 
     @DOpt(type=DOpt.Type.DataSourceConstructor)
-    public SpaServiceOrder(@AttrRef("code") String code,
-                            @AttrRef("createdAt") Date createdAt,
-                            @AttrRef("spaService") SpaService spaService,
-                            @AttrRef("quantity") Integer quantity,
-                            @AttrRef("reservation") Reservation reservation,
+    public SpaServiceOrder(@AttrRef("createdAt") Date createdAt,
+                           @AttrRef("quantity") Integer quantity,
+                           @AttrRef("reservation") Reservation reservation,
                            @AttrRef("rating") Integer rating,
-                           @AttrRef("employee") Employee employee
-
+                           @AttrRef("employee") Employee employee,
+                           @AttrRef("code") String code,
+                           @AttrRef("spaService") SpaService spaService,
+                           @AttrRef("totalPrice") Long totalPrice
     ) throws ConstraintViolationException {
         super(createdAt, quantity, reservation,rating, employee);
         this.code = nextCode(code);
         this.spaService = spaService;
 
+        computeTotalPrice();
     }
 
     public String getCode() {
@@ -64,6 +65,7 @@ public class SpaServiceOrder extends ServiceOrder {
 
     public void setSpaService(SpaService spaService) {
         this.spaService = spaService;
+        computeTotalPrice();
     }
 
     private String nextCode(String code) throws ConstraintViolationException {
@@ -85,4 +87,13 @@ public class SpaServiceOrder extends ServiceOrder {
         }
     }
 
+
+    @Override
+    Long computeTotalPrice() {
+        if (spaService != null)
+            totalPrice = spaService.getPrice() * getQuantity();
+        else
+            totalPrice = 0L;
+        return totalPrice;
+    }
 }

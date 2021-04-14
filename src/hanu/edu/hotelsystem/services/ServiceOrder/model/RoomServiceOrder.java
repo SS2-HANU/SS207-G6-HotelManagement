@@ -29,28 +29,29 @@ public class RoomServiceOrder extends ServiceOrder{
 
     @DOpt(type = DOpt.Type.ObjectFormConstructor)
     public RoomServiceOrder(@AttrRef("createdAt") Date createdAt,
-                            @AttrRef("roomService") RoomService roomService,
                             @AttrRef("quantity") Integer quantity,
                             @AttrRef("reservation") Reservation reservation,
                             @AttrRef("rating") Integer rating,
-                            @AttrRef("employee") Employee employee
+                            @AttrRef("employee") Employee employee,
+                            @AttrRef("roomService") RoomService roomService
     ){
-        this(null, createdAt,roomService, quantity, reservation,rating,employee);
+        this(createdAt, quantity, 0L, reservation, rating, employee, null, roomService);
     }
 
     @DOpt(type=DOpt.Type.DataSourceConstructor)
-    public RoomServiceOrder(@AttrRef("code") String code,
-                            @AttrRef("createdAt") Date createdAt,
-                            @AttrRef("roomService") RoomService roomService,
+    public RoomServiceOrder(@AttrRef("createdAt") Date createdAt,
                             @AttrRef("quantity") Integer quantity,
+                            @AttrRef("totalPrice") Long totalPrice,
                             @AttrRef("reservation") Reservation reservation,
                             @AttrRef("rating") Integer rating,
-                            @AttrRef("employee") Employee employee
-
-                            ) throws ConstraintViolationException {
-        super(createdAt, quantity, reservation,rating, employee);
+                            @AttrRef("employee") Employee employee,
+                            @AttrRef("code") String code,
+                            @AttrRef("roomService") RoomService roomService) throws ConstraintViolationException {
+        super(createdAt, quantity,reservation,rating, employee);
         this.code = nextCode(code);
         setRoomService(roomService);
+
+        computeTotalPrice();
     }
 
     public String getCode() {
@@ -63,6 +64,7 @@ public class RoomServiceOrder extends ServiceOrder{
 
     public void setRoomService(RoomService roomService) {
         this.roomService = roomService;
+        computeTotalPrice();
     }
 
     private String nextCode(String code) throws ConstraintViolationException {
@@ -84,4 +86,12 @@ public class RoomServiceOrder extends ServiceOrder{
         }
     }
 
+    @Override
+    Long computeTotalPrice() {
+        if (roomService != null)
+            totalPrice = roomService.getPrice() * getQuantity();
+        else
+            totalPrice = 0L;
+        return totalPrice;
+    }
 }
