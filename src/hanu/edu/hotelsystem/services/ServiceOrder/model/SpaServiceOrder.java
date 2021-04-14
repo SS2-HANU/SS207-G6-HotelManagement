@@ -22,7 +22,7 @@ public class SpaServiceOrder extends ServiceOrder {
     private String code;
     private static int counter;
 
-    @DAttr(name="spaService",type= DAttr.Type.Domain,length = 30, optional = false)
+    @DAttr(name="spaService",type= DAttr.Type.Domain,length = 20, optional = false)
     @DAssoc(ascName="spa-service-has-spa-service-order",role="spa-service-order",
             ascType= DAssoc.AssocType.One2Many,endType= DAssoc.AssocEndType.Many,
             associate=@DAssoc.Associate(type= SpaService.class,cardMin=1,cardMax=1))

@@ -50,8 +50,12 @@ public class Employee extends Person {
             associate=@DAssoc.Associate(type= ServiceOrder.class,
                     cardMin=0,cardMax=25))
     private Collection<ServiceOrder> serviceOrders;
-
     private int orderCount;
+
+    @DAttr(name = "star", type = DAttr.Type.Integer, auto = true, mutable = false, min = 1, max = 5)
+    private int star;
+
+    private double averageRating;
 
     @DOpt(type = DOpt.Type.ObjectFormConstructor)
     public Employee(
@@ -64,7 +68,7 @@ public class Employee extends Person {
             @AttrRef("email") String email,
             @AttrRef("salary") Long salary,
             @AttrRef("department") Department department){
-        this( null, name, gender,dob, address, phoneNum, email, salary,department);
+        this( null, name, gender,dob, address, phoneNum, email, salary,department, 0);
     }
 
     @DOpt(type = DOpt.Type.DataSourceConstructor)
@@ -78,7 +82,8 @@ public class Employee extends Person {
             @AttrRef("phoneNum") String phoneNum,
             @AttrRef("email") String email,
             @AttrRef("salary") Long salary,
-            @AttrRef("department") Department department
+            @AttrRef("department") Department department,
+            @AttrRef("star") Integer star
     ) throws ConstraintViolationException {
         super(name, gender, dob, address, phoneNum);
         this.code = nextCode(code);
@@ -88,6 +93,8 @@ public class Employee extends Person {
 
         serviceOrders = new ArrayList<>();
         orderCount = 0;
+
+        averageRating = 0D;
     }
 
     public String getCode() {
@@ -122,6 +129,14 @@ public class Employee extends Person {
         this.department = department;
     }
 
+    public int getStar() {
+        return star;
+    }
+
+    public void setStar(int star) {
+        this.star = star;
+    }
+
     @DOpt(type=DOpt.Type.LinkAdder)
     public boolean addServiceOrder(ServiceOrder order) {
         if (!this.serviceOrders.contains(order)) {
@@ -137,6 +152,9 @@ public class Employee extends Person {
         serviceOrders.add(order);
         orderCount++;
         // no other attributes changed
+
+        computeAverageRating();
+
         return false;
     }
 
@@ -157,6 +175,8 @@ public class Employee extends Person {
         this.serviceOrders.addAll(orders);
         orderCount += orders.size();
 
+        computeAverageRating();
+
         // no other attributes changed
         return false;
     }
@@ -168,10 +188,26 @@ public class Employee extends Person {
 
         if (removed) {
             orderCount--;
-        }
 
+            computeAverageRating();
+        }
         // no other attributes changed
         return false;
+    }
+
+    @DOpt(type = DOpt.Type.LinkUpdater)
+    public boolean updateServiceOrder(ServiceOrder s){
+        double totalRating = averageRating * orderCount;
+
+        int oldAverageRating = s.getRating();
+
+        int diff = s.getRating() - oldAverageRating;
+
+        totalRating += diff;
+
+        averageRating = totalRating / orderCount;
+
+        return true;
     }
 
     @DOpt(type=DOpt.Type.Setter)
@@ -179,6 +215,8 @@ public class Employee extends Person {
         this.serviceOrders = orders;
 
         orderCount = orders.size();
+
+        computeAverageRating();
     }
 
     /**
@@ -198,6 +236,37 @@ public class Employee extends Person {
     @DOpt(type=DOpt.Type.Getter)
     public Collection<ServiceOrder> getServiceOrders() {
         return serviceOrders;
+    }
+
+    /**
+     * @effects
+     *  computes {@link #averageRating} of all the {@link ServiceOrder#getRating()}s
+     *  (in {@link #serviceOrders}.
+     */
+    private void computeAverageRating() {
+        if (orderCount > 0) {
+            double totalRanking = 0d;
+            for (ServiceOrder s : serviceOrders) {
+                totalRanking += s.getRating();
+            }
+            averageRating = totalRanking / orderCount;
+        } else {
+            averageRating = 0;
+        }
+        if (averageRating <= 2)
+            star = 1;
+        else if (averageRating > 2 && averageRating <= 4)
+            star = 2;
+        else if (averageRating > 4 && averageRating <= 6)
+            star = 3;
+        else if (averageRating > 6 && averageRating <= 8)
+            star = 4;
+        else
+            star = 5;
+    }
+
+    public double getAverageRanking() {
+        return averageRating;
     }
 
     @Override
