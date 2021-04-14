@@ -33,7 +33,6 @@ public class SpaService extends Service {
 
 
     @DOpt(type = DOpt.Type.ObjectFormConstructor)
-    @DOpt(type = DOpt.Type.RequiredConstructor)
     public SpaService(@AttrRef("type") Duration type,
                        @AttrRef("price") Long price ) {
         this(null, type, price);
@@ -117,6 +116,11 @@ public class SpaService extends Service {
         orderCount = orders.size();
     }
 
+    @DOpt(type=DOpt.Type.Getter)
+    public Collection<SpaServiceOrder> getSpaServiceOrders() {
+        return spaServiceOrders;
+    }
+
     /**
      * @effects
      *  return <tt>orderCount</tt>
@@ -131,9 +135,7 @@ public class SpaService extends Service {
         orderCount = count;
     }
 
-    @DOpt(type=DOpt.Type.Getter)
-    public Collection<SpaServiceOrder> getSpaServiceOrders() {
-        return spaServiceOrders;
-    }
+
+
 
 }

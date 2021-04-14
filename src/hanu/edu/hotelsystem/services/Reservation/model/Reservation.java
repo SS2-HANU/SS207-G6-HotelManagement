@@ -29,7 +29,7 @@ public class Reservation {
     private int id;
     private static int idCounter;
 
-    @DAttr(name = "createdAt", type = DAttr.Type.Date, length = 15, optional = false, format= DAttr.Format.Date)
+    @DAttr(name = "createdAt", type = DAttr.Type.Date, length = 15, optional = false, format= DAttr.Format.Date, cid = true)
     private Date createdAt;
 
     @DAttr(name = "startDate", type = DAttr.Type.Date, length = 15, optional = false, format= DAttr.Format.Date)
@@ -38,7 +38,7 @@ public class Reservation {
     @DAttr(name = "endDate", type = DAttr.Type.Date, length = 15, optional = false, format= DAttr.Format.Date)
     private Date endDate;
 
-    @DAttr(name = "customer", type = DAttr.Type.Domain, length = 20, optional = false)
+    @DAttr(name = "customer", type = DAttr.Type.Domain, length = 20, optional = false, cid = true)
     @DAssoc(ascName = "customer-has-reservation", role = "reservation",
             ascType = DAssoc.AssocType.One2Many, endType = DAssoc.AssocEndType.Many,
             associate = @DAssoc.Associate(type = Customer.class, cardMin = 1, cardMax = 1))

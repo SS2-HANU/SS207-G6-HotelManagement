@@ -55,6 +55,7 @@ public class Employee extends Person {
     @DAttr(name = "star", type = DAttr.Type.Integer, auto = true, mutable = false, min = 1, max = 5)
     private int star;
 
+    @DAttr(name = "averageRating", type = DAttr.Type.Double, auto = true, mutable = false)
     private double averageRating;
 
     @DOpt(type = DOpt.Type.ObjectFormConstructor)
@@ -68,7 +69,7 @@ public class Employee extends Person {
             @AttrRef("email") String email,
             @AttrRef("salary") Long salary,
             @AttrRef("department") Department department){
-        this( null, name, gender,dob, address, phoneNum, email, salary,department, 0);
+        this( null, name, gender,dob, address, phoneNum, email, salary,department, 0D,0);
     }
 
     @DOpt(type = DOpt.Type.DataSourceConstructor)
@@ -83,6 +84,7 @@ public class Employee extends Person {
             @AttrRef("email") String email,
             @AttrRef("salary") Long salary,
             @AttrRef("department") Department department,
+            @AttrRef("averageRating") Double averageRating,
             @AttrRef("star") Integer star
     ) throws ConstraintViolationException {
         super(name, gender, dob, address, phoneNum);
@@ -135,6 +137,10 @@ public class Employee extends Person {
 
     public void setStar(int star) {
         this.star = star;
+    }
+
+    public double getAverageRating() {
+        return averageRating;
     }
 
     @DOpt(type=DOpt.Type.LinkAdder)
@@ -219,6 +225,12 @@ public class Employee extends Person {
         computeAverageRating();
     }
 
+
+    @DOpt(type=DOpt.Type.Getter)
+    public Collection<ServiceOrder> getServiceOrders() {
+        return serviceOrders;
+    }
+
     /**
      * @effects
      *  return <tt>orderCount</tt>
@@ -233,10 +245,6 @@ public class Employee extends Person {
         orderCount = count;
     }
 
-    @DOpt(type=DOpt.Type.Getter)
-    public Collection<ServiceOrder> getServiceOrders() {
-        return serviceOrders;
-    }
 
     /**
      * @effects
@@ -249,7 +257,9 @@ public class Employee extends Person {
             for (ServiceOrder s : serviceOrders) {
                 totalRanking += s.getRating();
             }
-            averageRating = totalRanking / orderCount;
+            averageRating = Math.round(totalRanking / orderCount);
+
+
         } else {
             averageRating = 0;
         }

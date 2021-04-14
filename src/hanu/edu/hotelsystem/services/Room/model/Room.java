@@ -33,7 +33,7 @@ public class Room {
     private int id;
     private static int idCounter;
 
-    @DAttr(name = R_name, auto = true, type = DAttr.Type.String, length = 6,mutable = false, optional = false,
+    @DAttr(name = R_name, auto = true, type = DAttr.Type.String, length = 6,cid = true,mutable = false, optional = false,
             serialisable=false,derivedFrom = {R_floor})
     private String name;
 
