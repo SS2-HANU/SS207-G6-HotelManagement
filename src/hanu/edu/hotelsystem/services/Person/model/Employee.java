@@ -8,6 +8,7 @@ import domainapp.basics.model.meta.DClass;
 import domainapp.basics.model.meta.DOpt;
 import domainapp.basics.model.meta.Select;
 import domainapp.basics.util.Tuple;
+import domainapp.basics.util.cache.StateHistory;
 import hanu.edu.hotelsystem.services.ServiceOrder.model.ServiceOrder;
 import hanu.edu.hotelsystem.services.Department.model.Department;
 
@@ -57,6 +58,7 @@ public class Employee extends Person {
 
     @DAttr(name = "averageRating", type = DAttr.Type.Double, auto = true, mutable = false)
     private double averageRating;
+
 
     @DOpt(type = DOpt.Type.ObjectFormConstructor)
     public Employee(
@@ -204,7 +206,7 @@ public class Employee extends Person {
     public boolean updateServiceOrder(ServiceOrder s){
         double totalRating = averageRating * orderCount;
 
-        int oldAverageRating = s.getRating();
+        int oldAverageRating = s.getRating(true);
 
         int diff = s.getRating() - oldAverageRating;
 

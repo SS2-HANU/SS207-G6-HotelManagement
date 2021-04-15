@@ -28,7 +28,7 @@ public class Reservation {
     public static final String Attr_customer = "customer";
     public static final String Attr_CreatedAt = "createdAt";
     public static final String Attr_StartDate = "startDate";
-    public static final String Attr_EndDate = "EndDate";
+    public static final String Attr_EndDate = "endDate";
     public static final String rptbyStatus = "reservationByStatusReport";
 
 
@@ -83,6 +83,9 @@ public class Reservation {
 
     private int roomOrderCount;
 
+    @DAttr(name = "totalPrice", type = DAttr.Type.Long, auto = true, mutable = false)
+    private Long totalPrice;
+
     @DAttr(name=rptbyStatus,type= DAttr.Type.Domain, serialisable=false,
             // IMPORTANT: set virtual=true to exclude this attribute from the object state
             // (avoiding the view having to load this attribute's value from data source)
@@ -95,7 +98,7 @@ public class Reservation {
                        @AttrRef("endDate") Date endDate,
                        @AttrRef("customer") Customer customer,
                        @AttrRef("isCancel") Boolean isCancel) {
-        this(null,createdAt, startDate, endDate, customer, isCancel);
+        this(null,createdAt, startDate, endDate, customer, isCancel,0L);
     }
 
     @DOpt(type = DOpt.Type.DataSourceConstructor)
@@ -104,7 +107,8 @@ public class Reservation {
                        @AttrRef("startDate") Date startDate,
                        @AttrRef("endDate") Date endDate,
                        @AttrRef("customer") Customer customer,
-                       @AttrRef("isCancel") Boolean isCancel) throws ConstraintViolationException {
+                       @AttrRef("isCancel") Boolean isCancel,
+                       @AttrRef("totalPrice") Long totalPrice) throws ConstraintViolationException {
         this.id = nextID(id);
         this.createdAt = createdAt;
         this.startDate = startDate;
@@ -116,6 +120,8 @@ public class Reservation {
 
         roomOrders = new ArrayList<>();
         roomOrderCount = 0;
+
+        this.totalPrice = 0L;
 
         stateHist = new StateHistory<>();
         updateStatus();
@@ -174,6 +180,9 @@ public class Reservation {
         serviceOrders.add(order);
         serviceOrderCount++;
         // no other attributes changed
+
+        computeTotalPrice();
+
         return false;
     }
 
@@ -194,6 +203,7 @@ public class Reservation {
         this.serviceOrders.addAll(orders);
         serviceOrderCount += orders.size();
 
+        computeTotalPrice();
         // no other attributes changed
         return false;
     }
@@ -204,6 +214,7 @@ public class Reservation {
 
         if (removed) {
             serviceOrderCount--;
+            computeTotalPrice();
         }
 
         // no other attributes changed
@@ -215,6 +226,8 @@ public class Reservation {
         this.serviceOrders = orders;
 
         serviceOrderCount = orders.size();
+
+        computeTotalPrice();
     }
 
     @DOpt(type = DOpt.Type.Getter)
@@ -399,6 +412,25 @@ public class Reservation {
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
+    }
+
+    /**
+     * @effects
+     *  computes {@link #totalPrice} of all the {@link ServiceOrder#getTotalPrice()}s
+     *  (in {@link #serviceOrders}.
+     */
+
+    private void computeTotalPrice(){
+        if(serviceOrderCount > 0){
+            for(ServiceOrder s: serviceOrders){
+                totalPrice += s.getTotalPrice();
+            }
+        } else
+            totalPrice = 0L;
+    }
+
+    public Long getTotalPrice() {
+        return totalPrice;
     }
 
     @Override

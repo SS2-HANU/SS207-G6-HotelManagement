@@ -6,6 +6,7 @@ import domainapp.basics.model.meta.DAssoc;
 import domainapp.basics.model.meta.DAttr;
 import domainapp.basics.model.meta.DClass;
 import domainapp.basics.model.meta.DOpt;
+import domainapp.basics.util.cache.StateHistory;
 import hanu.edu.hotelsystem.services.Reservation.model.Reservation;
 import hanu.edu.hotelsystem.services.Person.model.Employee;
 
@@ -15,6 +16,7 @@ import java.util.Objects;
 
 @DClass(schema = "hotelsystem")
 public abstract class ServiceOrder {
+    public static final String Attr_rating = "rating";
 
     @DAttr(name = "id", id = true, type = DAttr.Type.Integer, auto = true, length = 6,
             mutable = false, optional = false)
@@ -30,8 +32,10 @@ public abstract class ServiceOrder {
     @DAttr(name = "totalPrice", type = DAttr.Type.Long, optional = false, auto = true, mutable = false)
     protected Long totalPrice;
 
-    @DAttr(name = "rating", type = DAttr.Type.Integer, optional = false, min = 1, max = 10)
+    @DAttr(name = Attr_rating, type = DAttr.Type.Integer, optional = false, min = 1, max = 10)
     private Integer rating;
+
+    private StateHistory<String, Object> stateHist;
 
     @DAttr(name="reservation",type= DAttr.Type.Domain,length = 10, optional = false)
     @DAssoc(ascName="reservation-has-service-order",role="service-order",
@@ -117,7 +121,24 @@ public abstract class ServiceOrder {
     }
 
     public Integer getRating() {
-        return rating;
+        return getRating(false);
+    }
+
+    public Integer getRating(boolean cached) {
+        if (cached) {
+            Object val = stateHist.get(Attr_rating);
+
+            if (val == null)
+                throw new IllegalStateException(
+                        "ServiceOrder.getRating: cached value is null");
+
+            return (Integer) val;
+        } else {
+            if (rating != null)
+                return rating;
+            else
+                return 0;
+        }
     }
 
     public void setRating(Integer rating) {
