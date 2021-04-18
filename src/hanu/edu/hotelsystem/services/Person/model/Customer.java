@@ -52,19 +52,20 @@ public class Customer extends Person {
             @AttrRef("dob") Date dob,
             @AttrRef("address") Address address,
             @AttrRef("phoneNum") String phoneNum) {
-        this(null, name, gender, dob, address, phoneNum);
+        this(null, name, gender, dob, address, phoneNum, null);
     }
 
     @DOpt(type = DOpt.Type.DataSourceConstructor)
     public Customer(
-            @AttrRef("code") String code,
+            @AttrRef("id") Integer id,
             @AttrRef("name") String name,
             @AttrRef("gender") Gender gender,
             @AttrRef("dob") Date dob,
             @AttrRef("address") Address address,
-            @AttrRef("phoneNum") String phoneNum
-    ) throws ConstraintViolationException {
-        super(name, gender, dob, address, phoneNum);
+            @AttrRef("phoneNum") String phoneNum,
+            @AttrRef("code") String code
+            ) throws ConstraintViolationException {
+        super(id,name, gender, dob, address, phoneNum);
         this.code = nextCode(code);
 
         reservations = new ArrayList<>();
@@ -255,6 +256,13 @@ public class Customer extends Person {
     @DOpt(type = DOpt.Type.LinkCountSetter)
     public void setRestaurantServiceOrderCount(int count) {
         restaurantServiceOrderCount = count;
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "code='" + code + '\'' +
+                '}';
     }
 }
 

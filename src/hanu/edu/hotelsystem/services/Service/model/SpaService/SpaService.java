@@ -1,5 +1,6 @@
 package hanu.edu.hotelsystem.services.Service.model.SpaService;
 
+import domainapp.basics.exceptions.ConstraintViolationException;
 import domainapp.basics.model.meta.AttrRef;
 import domainapp.basics.model.meta.DAssoc;
 import domainapp.basics.model.meta.DAttr;
@@ -16,9 +17,8 @@ import java.util.Collection;
 public class SpaService extends Service {
 
 
-    @DAttr(name = "type", type = DAttr.Type.Domain, length = 30, optional = false, cid = true)
-    private Duration type;
-
+    @DAttr(name = "duration", type = DAttr.Type.Domain, length = 30, optional = false, cid = true)
+    private Duration duration;
 
     @DAttr(name="spaServiceOrders",type= DAttr.Type.Collection,
             serialisable=false,optional=false,
@@ -28,33 +28,33 @@ public class SpaService extends Service {
             associate=@DAssoc.Associate(type=SpaServiceOrder.class,
                     cardMin=1,cardMax=25))
     private Collection<SpaServiceOrder> spaServiceOrders;
-
     private int orderCount;
 
 
     @DOpt(type = DOpt.Type.ObjectFormConstructor)
-    public SpaService(@AttrRef("type") Duration type,
-                       @AttrRef("price") Long price ) {
-        this(null, type, price);
+    public SpaService(@AttrRef("price") Long price,
+                      @AttrRef("duration") Duration duration) {
+        this(null, price, duration);
     }
 
     @DOpt(type = DOpt.Type.DataSourceConstructor)
-    public SpaService(@AttrRef("id") Integer id, @AttrRef("type") Duration type,
-                       @AttrRef("price") Long price) {
+    public SpaService(@AttrRef("id") Integer id,
+                       @AttrRef("price") Long price,
+                      @AttrRef("duration") Duration duration) throws ConstraintViolationException {
         super(id, price);
-        this.type = type;
+        this.duration = duration;
 
         spaServiceOrders = new ArrayList<>();
         orderCount = 0;
     }
 
 
-    public Duration getType() {
-        return type;
+    public Duration getDuration() {
+        return duration;
     }
 
-    public void setType(Duration type) {
-        this.type = type;
+    public void setDuration(Duration duration) {
+        this.duration = duration;
     }
 
     @DOpt(type=DOpt.Type.LinkAdder)
@@ -97,7 +97,6 @@ public class SpaService extends Service {
     }
 
     @DOpt(type=DOpt.Type.LinkRemover)
-    //only need to do this for reflexive association: @MemberRef(name="students")
     public boolean removeSpaServiceOrder(SpaServiceOrder o) {
         boolean removed = spaServiceOrders.remove(o);
 
@@ -113,7 +112,7 @@ public class SpaService extends Service {
     public void setSpaServiceOrders(Collection<SpaServiceOrder> orders) {
         this.spaServiceOrders = orders;
 
-        orderCount = orders.size();
+//        orderCount = orders.size();
     }
 
     @DOpt(type=DOpt.Type.Getter)
@@ -134,8 +133,6 @@ public class SpaService extends Service {
     public void setSpaServiceOrderCount(int count) {
         orderCount = count;
     }
-
-
 
 
 }

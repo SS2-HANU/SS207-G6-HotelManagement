@@ -6,7 +6,7 @@ public enum Status {
     CANCELLED,
     COMPLETED,
     SERVING,
-    REGISTERED,
+    RESERVED,
     UNDEFINED;
 
     @DAttr(name = "name", type = DAttr.Type.String, id = true, length = 10)

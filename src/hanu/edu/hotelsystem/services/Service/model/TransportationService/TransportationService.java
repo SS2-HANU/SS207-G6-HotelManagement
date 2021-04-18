@@ -34,15 +34,15 @@ public class TransportationService extends Service {
 
 
     @DOpt(type = DOpt.Type.ObjectFormConstructor)
-    @DOpt(type = DOpt.Type.RequiredConstructor)
-    public TransportationService(@AttrRef("vehicle") String vehicle,
-                      @AttrRef("price") Long price ) {
-        this(null, vehicle, price);
+    public TransportationService(@AttrRef("price") Long price,
+                                 @AttrRef("vehicle") String vehicle) {
+        this(null, price, vehicle);
     }
 
     @DOpt(type = DOpt.Type.DataSourceConstructor)
-    public TransportationService(@AttrRef("id") Integer id, @AttrRef("vehicle") String vehicle,
-                      @AttrRef("price") Long price) {
+    public TransportationService(@AttrRef("id") Integer id,
+                                 @AttrRef("price") Long price,
+                                 @AttrRef("vehicle") String vehicle) {
         super(id, price);
         this.vehicle = vehicle;
 
@@ -99,7 +99,6 @@ public class TransportationService extends Service {
     }
 
     @DOpt(type=DOpt.Type.LinkRemover)
-    //only need to do this for reflexive association: @MemberRef(name="students")
     public boolean removeTransportationServiceOrder(TransportationServiceOrder o) {
         boolean removed = transportationServiceOrders.remove(o);
 
@@ -112,11 +111,19 @@ public class TransportationService extends Service {
     }
 
     @DOpt(type=DOpt.Type.Setter)
+    public void setTransportationServiceOrders(Collection<TransportationServiceOrder> transportationServiceOrders) {
+        this.transportationServiceOrders = transportationServiceOrders;
+    }
 
-    /**
-     * @effects
-     *  return <tt>orderCount</tt>
-     */
+    @DOpt(type=DOpt.Type.Getter)
+    public Collection<TransportationServiceOrder> getTransportationServiceOrders() {
+        return transportationServiceOrders;
+    }
+
+        /**
+         * @effects
+         *  return <tt>orderCount</tt>
+         */
     @DOpt(type=DOpt.Type.LinkCountGetter)
     public Integer getTransportationServiceOrderCount() {
         return orderCount;
@@ -125,15 +132,6 @@ public class TransportationService extends Service {
     @DOpt(type=DOpt.Type.LinkCountSetter)
     public void setTransportationServiceOrderCount(int count) {
         orderCount = count;
-    }
-
-    @DOpt(type=DOpt.Type.Getter)
-    public Collection<TransportationServiceOrder> getTransportationServiceOrders() {
-        return transportationServiceOrders;
-    }
-
-    public void setTransportationServiceOrders(Collection<TransportationServiceOrder> transportationServiceOrders) {
-        this.transportationServiceOrders = transportationServiceOrders;
     }
 
 }

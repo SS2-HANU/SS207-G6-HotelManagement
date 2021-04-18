@@ -32,23 +32,21 @@ public class SpaServiceOrder extends ServiceOrder {
                            @AttrRef("quantity") Integer quantity,
                            @AttrRef("reservation") Reservation reservation,
                            @AttrRef("rating") Integer rating,
-                           @AttrRef("employee") Employee employee,
                            @AttrRef("spaService") SpaService spaService
     ){
-        this(createdAt, quantity, reservation, rating, employee, null, spaService, 0L );
+        this(createdAt, quantity, 0L,reservation, rating, spaService,null );
     }
 
     @DOpt(type=DOpt.Type.DataSourceConstructor)
     public SpaServiceOrder(@AttrRef("createdAt") Date createdAt,
                            @AttrRef("quantity") Integer quantity,
+                           @AttrRef("totalPrice") Long totalPrice,
                            @AttrRef("reservation") Reservation reservation,
                            @AttrRef("rating") Integer rating,
-                           @AttrRef("employee") Employee employee,
-                           @AttrRef("code") String code,
                            @AttrRef("spaService") SpaService spaService,
-                           @AttrRef("totalPrice") Long totalPrice
+                           @AttrRef("code") String code
     ) throws ConstraintViolationException {
-        super(createdAt, quantity, reservation,rating, employee);
+        super(createdAt, quantity, reservation,rating);
         this.code = nextCode(code);
         this.spaService = spaService;
 
@@ -57,15 +55,6 @@ public class SpaServiceOrder extends ServiceOrder {
 
     public String getCode() {
         return code;
-    }
-
-    public SpaService getSpaService() {
-        return spaService;
-    }
-
-    public void setSpaService(SpaService spaService) {
-        this.spaService = spaService;
-        computeTotalPrice();
     }
 
     private String nextCode(String code) throws ConstraintViolationException {
@@ -87,6 +76,14 @@ public class SpaServiceOrder extends ServiceOrder {
         }
     }
 
+    public SpaService getSpaService() {
+        return spaService;
+    }
+
+    public void setSpaService(SpaService spaService) {
+        this.spaService = spaService;
+        computeTotalPrice();
+    }
 
     @Override
     Long computeTotalPrice() {

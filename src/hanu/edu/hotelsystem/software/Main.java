@@ -3,6 +3,7 @@ package hanu.edu.hotelsystem.software;
 import domainapp.basics.exceptions.DataSourceException;
 import domainapp.software.SoftwareFactory;
 import domainapp.softwareimpl.DomSoftware;
+import hanu.edu.hotelsystem.services.Assignment.model.Assignment;
 import hanu.edu.hotelsystem.services.Delivery.model.Delivery;
 import hanu.edu.hotelsystem.services.Delivery.model.InplaceDelivery;
 import hanu.edu.hotelsystem.services.Delivery.model.RoomDelivery;
@@ -17,8 +18,9 @@ import hanu.edu.hotelsystem.services.Room.model.Room;
 import hanu.edu.hotelsystem.services.Room.model.RoomType;
 import hanu.edu.hotelsystem.services.RoomOrder.model.RoomOrder;
 import hanu.edu.hotelsystem.services.Service.model.RestaurantService.RestaurantService;
-import hanu.edu.hotelsystem.services.Service.model.RoomService.RoomService;
+import hanu.edu.hotelsystem.services.Service.model.RoomService.RoomServiceType;
 import hanu.edu.hotelsystem.services.Service.model.Service;
+import hanu.edu.hotelsystem.services.Service.model.SpaService.Duration;
 import hanu.edu.hotelsystem.services.Service.model.SpaService.SpaService;
 import hanu.edu.hotelsystem.services.Service.model.TransportationService.TransportationService;
 import hanu.edu.hotelsystem.services.ServiceOrder.model.RestaurantServiceOrder;
@@ -44,6 +46,7 @@ public class Main {
             Department.class,
             Customer.class,
             Reservation.class,
+            Assignment.class,
             RoomOrder.class,
             Room.class,
             Service.class,
@@ -76,11 +79,18 @@ public class Main {
         sw.addClasses(models);
 
         createAddress(sw);
-//        createCustomer(sw);
-//        createReservation(sw);
+        createCustomer(sw);
+
+        createReservation(sw);
+
         createDepartment(sw);
-//        createEmployee(sw);
-//        createRoom(sw);
+        createEmployee(sw);
+        createRoom(sw);
+
+//        createSpaService(sw);
+//        createRoomService(sw);
+        createTransportationService(sw);
+        createRestaurantService(sw);
 
         // 2. create UI software
         sw = SoftwareFactory.createUIDomSoftware();
@@ -136,19 +146,20 @@ public class Main {
         sw.addObject(Customer.class, customer);
     }
 
-//    private static void createReservation(DomSoftware sw) throws DataSourceException {
-//
-//        Customer customer = sw.retrieveObjectById(Customer.class, 1);
-//        assert customer != null;
-//
-//        Date createdAt = Toolkit.getDateZeroTime(1, 1, 2021);
-//        Date startDate = Toolkit.getDateZeroTime(2, 1, 2021);
-//        Date endDate = Toolkit.getDateZeroTime(10, 1, 2021);
-//
-//        Reservation reservation = new Reservation(createdAt, startDate, endDate, customer);
-//
-//        sw.addObject(Reservation.class, reservation);
-//    }
+    private static void createReservation(DomSoftware sw) throws DataSourceException {
+
+        Customer customer = sw.retrieveObjectById(Customer.class, 1);
+        assert customer != null;
+        //Boolean isCancel = false;
+
+        Date createdAt = Toolkit.getDateZeroTime(1, 1, 2021);
+        Date startDate = Toolkit.getDateZeroTime(2, 1, 2021);
+        Date endDate = Toolkit.getDateZeroTime(10, 1, 2021);
+
+        Reservation reservation = new Reservation(createdAt, startDate, endDate, customer, false);
+
+        sw.addObject(Reservation.class, reservation);
+    }
 
     private static void createDepartment(DomSoftware sw) throws DataSourceException {
         Department department = new Department("Manager");
@@ -170,7 +181,59 @@ public class Main {
     private static void createRoom(DomSoftware sw) throws DataSourceException{
         Room room1 = new Room(3, RoomType.VIP);
         sw.addObject(Room.class, room1);
-//        Room room2 = new Room(3, RoomType.VIP);
-//        sw.addObject(Room.class, room2);
+
+        Room room2 = new Room(3, RoomType.VIP);
+        sw.addObject(Room.class, room2);
     }
+
+
+    private static void createSpaService(DomSoftware sw) throws DataSourceException {
+        SpaService spaService1 = new SpaService(100L, Duration.C60_MINUTES);
+        sw.addObject(SpaService.class, spaService1);
+
+        SpaService spaService2 = new SpaService(120L, Duration.C90_MINUTES);
+        sw.addObject(SpaService.class, spaService2);
+    }
+//
+//    private static void createSpaServiceOrder(DomSoftware sw) throws DataSourceException {
+//        SpaService spaService = sw.retrieveObjectById(SpaService.class, 1);
+//        Employee employee = sw.retrieveObjectById(Employee.class, 1);
+//        Reservation reservation = sw.retrieveObjectById(Reservation.class, 1);
+//
+//        SpaServiceOrder spaServiceOrder1 = new SpaServiceOrder(new Date(), 1, reservation, null, employee, spaService);
+//        sw.addObject(SpaServiceOrder.class, spaServiceOrder1);
+//
+//        SpaServiceOrder spaServiceOrder2 = new SpaServiceOrder();
+//        sw.addObject(SpaServiceOrder.class, spaServiceOrder2);
+//    }
+
+    private static void createRoomService(DomSoftware sw) throws DataSourceException {
+        RoomService roomService = new RoomService(100L, RoomServiceType.BELL_SERVICE);
+
+        sw.addObject(RoomService.class, roomService);
+    }
+//
+//    private static void createRoomServiceOrder(DomSoftware sw) throws DataSourceException {
+//        RoomServiceOrder roomService = new RoomServiceOrder();
+//
+//        sw.addObject(RoomServiceOrder.class, roomService);
+//    }
+//
+    private static void createRestaurantService(DomSoftware sw) throws DataSourceException {
+        RestaurantService restaurantService = new RestaurantService(100L, "fish");
+
+        sw.addObject(RestaurantService.class, restaurantService);
+    }
+
+//
+//    private static void createRestaurantServiceOrder(DomSoftware sw) throws DataSourceException {
+//        RestaurantServiceOrder restaurantServiceOrder = new RestaurantServiceOrder();
+//
+//        sw.addObject(RestaurantServiceOrder.class, restaurantServiceOrder);
+//    }
+private static void createTransportationService(DomSoftware sw) throws DataSourceException {
+    TransportationService transportationService = new TransportationService(100L, "fish");
+
+    sw.addObject(TransportationService.class, transportationService);
+}
 }

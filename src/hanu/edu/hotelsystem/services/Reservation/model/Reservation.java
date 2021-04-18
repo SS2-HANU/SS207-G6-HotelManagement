@@ -114,6 +114,7 @@ public class Reservation {
         this.startDate = startDate;
         this.endDate = endDate;
         this.customer = customer;
+        this.isCancel = isCancel;
 
         serviceOrders = new ArrayList<>();
         serviceOrderCount = 0;
@@ -137,7 +138,7 @@ public class Reservation {
                 } else if (startDate.before(DToolkit.getNow()) && endDate.after(DToolkit.getNow())) {
                     status = Status.SERVING;
                 } else {
-                    status = Status.REGISTERED;
+                    status = Status.RESERVED;
                 }
             } else
                 status = Status.CANCELLED;
@@ -248,6 +249,8 @@ public class Reservation {
         serviceOrderCount = count;
     }
 
+    //RoomOrder
+
     @DOpt(type = DOpt.Type.LinkAdder)
     public boolean addRoomOrder(RoomOrder order) {
         if (!this.roomOrders.contains(order)) {
@@ -288,7 +291,6 @@ public class Reservation {
     }
 
     @DOpt(type = DOpt.Type.LinkRemover)
-    //only need to do this for reflexive association: @MemberRef(name="students")
     public boolean removeRoomOrder(RoomOrder o) {
         boolean removed = roomOrders.remove(o);
 
@@ -409,7 +411,6 @@ public class Reservation {
         return customer;
     }
 
-
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
@@ -446,6 +447,7 @@ public class Reservation {
         return Objects.hash(id);
     }
 
+
     @Override
     public String toString() {
         return "Reservation{" +
@@ -454,6 +456,9 @@ public class Reservation {
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
                 ", customer=" + customer +
+                ", isCancel=" + isCancel +
+                ", status=" + status +
+                ", totalPrice=" + totalPrice +
                 '}';
     }
 }

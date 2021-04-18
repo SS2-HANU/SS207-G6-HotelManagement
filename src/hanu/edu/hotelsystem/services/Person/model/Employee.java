@@ -8,8 +8,7 @@ import domainapp.basics.model.meta.DClass;
 import domainapp.basics.model.meta.DOpt;
 import domainapp.basics.model.meta.Select;
 import domainapp.basics.util.Tuple;
-import domainapp.basics.util.cache.StateHistory;
-import hanu.edu.hotelsystem.services.ServiceOrder.model.ServiceOrder;
+import hanu.edu.hotelsystem.services.Assignment.model.Assignment;
 import hanu.edu.hotelsystem.services.Department.model.Department;
 
 import java.util.ArrayList;
@@ -43,15 +42,15 @@ public class Employee extends Person {
             associate=@DAssoc.Associate(type= Department.class,cardMin=1,cardMax=1))
     private Department department;
 
-    @DAttr(name="serviceOrders",type= DAttr.Type.Collection,
+    @DAttr(name="assignments",type= DAttr.Type.Collection,
             serialisable=false,optional=false,
-            filter=@Select(clazz= ServiceOrder.class))
-    @DAssoc(ascName="employee-manages-service-order",role="employee",
+            filter=@Select(clazz= Assignment.class))
+    @DAssoc(ascName="employee-is-assigned-assignment",role="employee",
             ascType= DAssoc.AssocType.One2Many,endType= DAssoc.AssocEndType.One,
-            associate=@DAssoc.Associate(type= ServiceOrder.class,
+            associate=@DAssoc.Associate(type= Assignment.class,
                     cardMin=0,cardMax=25))
-    private Collection<ServiceOrder> serviceOrders;
-    private int orderCount;
+    private Collection<Assignment> assignments;
+    private int assignmentCount;
 
     @DAttr(name = "star", type = DAttr.Type.Integer, auto = true, mutable = false, min = 1, max = 5)
     private int star;
@@ -71,32 +70,32 @@ public class Employee extends Person {
             @AttrRef("email") String email,
             @AttrRef("salary") Long salary,
             @AttrRef("department") Department department){
-        this( null, name, gender,dob, address, phoneNum, email, salary,department, 0D,0);
+        this( null, name, gender,dob, address, phoneNum, null, email, salary,department, 0,0D);
     }
 
     @DOpt(type = DOpt.Type.DataSourceConstructor)
     public Employee(
-//            @AttrRef("id") Integer id,
-            @AttrRef("code") String code,
+            @AttrRef("id") Integer id,
             @AttrRef("name") String name,
             @AttrRef("gender") Gender gender,
             @AttrRef("dob") Date dob,
             @AttrRef("address") Address address,
             @AttrRef("phoneNum") String phoneNum,
+            @AttrRef("code") String code,
             @AttrRef("email") String email,
             @AttrRef("salary") Long salary,
             @AttrRef("department") Department department,
-            @AttrRef("averageRating") Double averageRating,
-            @AttrRef("star") Integer star
-    ) throws ConstraintViolationException {
-        super(name, gender, dob, address, phoneNum);
+            @AttrRef("star") Integer star,
+            @AttrRef("averageRating") Double averageRating
+            ) throws ConstraintViolationException {
+        super(id, name, gender, dob, address, phoneNum);
         this.code = nextCode(code);
         setEmail(email);
         setSalary(salary);
         setDepartment(department);
 
-        serviceOrders = new ArrayList<>();
-        orderCount = 0;
+        assignments = new ArrayList<>();
+        assignmentCount = 0;
 
         averageRating = 0D;
     }
@@ -146,9 +145,9 @@ public class Employee extends Person {
     }
 
     @DOpt(type=DOpt.Type.LinkAdder)
-    public boolean addServiceOrder(ServiceOrder order) {
-        if (!this.serviceOrders.contains(order)) {
-            serviceOrders.add(order);
+    public boolean addAssignment(Assignment assignment) {
+        if (!this.assignments.contains(assignment)) {
+            assignments.add(assignment);
         }
 
         // no other attributes changed
@@ -156,9 +155,9 @@ public class Employee extends Person {
     }
 
     @DOpt(type=DOpt.Type.LinkAdderNew)
-    public boolean addNewServiceOrder(ServiceOrder order) {
-        serviceOrders.add(order);
-        orderCount++;
+    public boolean addNewAssignment(Assignment assignment) {
+        assignments.add(assignment);
+        assignmentCount++;
         // no other attributes changed
 
         computeAverageRating();
@@ -167,10 +166,10 @@ public class Employee extends Person {
     }
 
     @DOpt(type=DOpt.Type.LinkAdder)
-    public boolean addServiceOrder(Collection<ServiceOrder> orders) {
-        for (ServiceOrder o : orders) {
-            if (!this.serviceOrders.contains(o)) {
-                this.serviceOrders.add(o);
+    public boolean addAssignment(Collection<Assignment> assignments) {
+        for (Assignment a : assignments) {
+            if (!this.assignments.contains(a)) {
+                this.assignments.add(a);
             }
         }
 
@@ -179,9 +178,9 @@ public class Employee extends Person {
     }
 
     @DOpt(type=DOpt.Type.LinkAdderNew)
-    public boolean addNewServiceOrder(Collection<ServiceOrder> orders) {
-        this.serviceOrders.addAll(orders);
-        orderCount += orders.size();
+    public boolean addNewAssignment(Collection<Assignment> assignments) {
+        this.assignments.addAll(assignments);
+        assignmentCount += assignments.size();
 
         computeAverageRating();
 
@@ -191,11 +190,11 @@ public class Employee extends Person {
 
     @DOpt(type=DOpt.Type.LinkRemover)
     //only need to do this for reflexive association: @MemberRef(name="students")
-    public boolean removeServiceOrder(ServiceOrder o) {
-        boolean removed = serviceOrders.remove(o);
+    public boolean removeAssignment(Assignment assignment) {
+        boolean removed = assignments.remove(assignment);
 
         if (removed) {
-            orderCount--;
+            assignmentCount--;
             computeAverageRating();
         }
         // no other attributes changed
@@ -203,33 +202,33 @@ public class Employee extends Person {
     }
 
     @DOpt(type = DOpt.Type.LinkUpdater)
-    public boolean updateServiceOrder(ServiceOrder s){
-        double totalRating = averageRating * orderCount;
+    public boolean updateAssignment(Assignment a){
+        double totalRating = averageRating * assignmentCount;
 
-        int oldAverageRating = s.getRating(true);
+        int oldAverageRating = a.getEmployeeRating(true);
 
-        int diff = s.getRating() - oldAverageRating;
+        int diff = a.getEmployeeRating() - oldAverageRating;
 
         totalRating += diff;
 
-        averageRating = totalRating / orderCount;
+        averageRating = totalRating / assignmentCount;
 
         return true;
     }
 
     @DOpt(type=DOpt.Type.Setter)
-    public void setServiceOrder(Collection<ServiceOrder> orders) {
-        this.serviceOrders = orders;
+    public void setAssignment(Collection<Assignment> orders) {
+        this.assignments = orders;
 
-        orderCount = orders.size();
+        assignmentCount = orders.size();
 
         computeAverageRating();
     }
 
 
     @DOpt(type=DOpt.Type.Getter)
-    public Collection<ServiceOrder> getServiceOrders() {
-        return serviceOrders;
+    public Collection<Assignment> getAssignments() {
+        return assignments;
     }
 
     /**
@@ -237,29 +236,29 @@ public class Employee extends Person {
      *  return <tt>orderCount</tt>
      */
     @DOpt(type=DOpt.Type.LinkCountGetter)
-    public Integer getAccompaniedServiceOrderCount() {
-        return orderCount;
+    public Integer getAssignmentCount() {
+        return assignmentCount;
     }
 
     @DOpt(type=DOpt.Type.LinkCountSetter)
-    public void setServiceOrderCount(int count) {
-        orderCount = count;
+    public void setAssignmentCount(int count) {
+        assignmentCount = count;
     }
 
 
     /**
      * @effects
-     *  computes {@link #averageRating} of all the {@link ServiceOrder#getRating()}s
-     *  (in {@link #serviceOrders}.
+     *  computes {@link #averageRating} of all the {@link Assignment#getEmployeeRating()}s
+     *  (in {@link #assignments}.
      */
     private void computeAverageRating() {
-        if (orderCount > 0) {
+        if (assignmentCount > 0) {
             double totalRating = 0d;
-            for (ServiceOrder s : serviceOrders) {
-                totalRating += s.getRating();
+            for (Assignment s : assignments) {
+                totalRating += s.getEmployeeRating();
             }
             totalRating = Math.round(totalRating * 100) ;
-            averageRating = totalRating / (100 * orderCount);
+            averageRating = totalRating / (100 * assignmentCount);
         } else {
             averageRating = 0;
         }

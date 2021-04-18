@@ -8,9 +8,8 @@ public enum Duration {
     C120_MINUTES;
 
 
-
     @DAttr(name="name", type= DAttr.Type.String, id=true, length=20)
     public String getName() {
-        return name();
+        return this.name();
     }
 }

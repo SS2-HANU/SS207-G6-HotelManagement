@@ -35,10 +35,9 @@ public class TransportationServiceOrder extends ServiceOrder{
                                       @AttrRef("quantity") Integer quantity,
                                       @AttrRef("reservation") Reservation reservation,
                                       @AttrRef("rating") Integer rating,
-                                      @AttrRef("employee") Employee employee,
                                       @AttrRef("transportationService") TransportationService transportationService,
                                       @AttrRef("distance") Integer distance){
-        this(createdAt, quantity, 0L, reservation, rating, employee, transportationService, distance, null);
+        this(createdAt, quantity, 0L, reservation, rating, transportationService, distance, null);
     }
 
     @DOpt(type=DOpt.Type.DataSourceConstructor)
@@ -47,15 +46,16 @@ public class TransportationServiceOrder extends ServiceOrder{
                                       @AttrRef("totalPrice") Long totalPrice,
                                       @AttrRef("reservation") Reservation reservation,
                                       @AttrRef("rating") Integer rating,
-                                      @AttrRef("employee") Employee employee,
                                       @AttrRef("transportationService") TransportationService transportationService,
                                       @AttrRef("distance") Integer distance,
                                       @AttrRef("code") String code
     ) throws ConstraintViolationException {
-        super(createdAt, quantity, reservation,rating, employee);
+        super(createdAt, quantity, reservation,rating);
         this.code = nextCode(code);
         this.transportationService = transportationService;
         this.distance = distance;
+
+        computeTotalPrice();
     }
 
     public String getCode() {

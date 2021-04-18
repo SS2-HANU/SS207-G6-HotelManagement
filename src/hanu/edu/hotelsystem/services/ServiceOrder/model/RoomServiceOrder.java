@@ -32,10 +32,9 @@ public class RoomServiceOrder extends ServiceOrder{
                             @AttrRef("quantity") Integer quantity,
                             @AttrRef("reservation") Reservation reservation,
                             @AttrRef("rating") Integer rating,
-                            @AttrRef("employee") Employee employee,
                             @AttrRef("roomService") RoomService roomService
     ){
-        this(createdAt, quantity, 0L, reservation, rating, employee, null, roomService);
+        this(createdAt, quantity, 0L, reservation, rating, roomService, null);
     }
 
     @DOpt(type=DOpt.Type.DataSourceConstructor)
@@ -44,26 +43,12 @@ public class RoomServiceOrder extends ServiceOrder{
                             @AttrRef("totalPrice") Long totalPrice,
                             @AttrRef("reservation") Reservation reservation,
                             @AttrRef("rating") Integer rating,
-                            @AttrRef("employee") Employee employee,
-                            @AttrRef("code") String code,
-                            @AttrRef("roomService") RoomService roomService) throws ConstraintViolationException {
-        super(createdAt, quantity,reservation,rating, employee);
+                            @AttrRef("roomService") RoomService roomService,
+                            @AttrRef("code") String code) throws ConstraintViolationException {
+        super(createdAt, quantity,reservation,rating);
         this.code = nextCode(code);
         setRoomService(roomService);
 
-        computeTotalPrice();
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public RoomService getRoomService() {
-        return roomService;
-    }
-
-    public void setRoomService(RoomService roomService) {
-        this.roomService = roomService;
         computeTotalPrice();
     }
 
@@ -85,6 +70,20 @@ public class RoomServiceOrder extends ServiceOrder{
             return code;
         }
     }
+
+    public String getCode() {
+        return code;
+    }
+
+    public RoomService getRoomService() {
+        return roomService;
+    }
+
+    public void setRoomService(RoomService roomService) {
+        this.roomService = roomService;
+        computeTotalPrice();
+    }
+
 
     @Override
     Long computeTotalPrice() {

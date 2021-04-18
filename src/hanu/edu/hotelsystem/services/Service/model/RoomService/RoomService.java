@@ -12,13 +12,12 @@ import hanu.edu.hotelsystem.services.ServiceOrder.model.RoomServiceOrder;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Objects;
 
 @DClass(schema = "hotelsystem")
 public class RoomService extends Service {
 
-    @DAttr(name = "type", type = DAttr.Type.Domain, length = 15, optional = false, cid = true)
-    private RoomServiceType type;
+    @DAttr(name = "roomServiceType", type = DAttr.Type.Domain, length = 15, optional = false, cid = true)
+    private RoomServiceType roomServiceType;
 
     @DAttr(name="roomServiceOrders",type= DAttr.Type.Collection,
             serialisable=false,optional=false,
@@ -34,16 +33,17 @@ public class RoomService extends Service {
 
     @DOpt(type = DOpt.Type.ObjectFormConstructor)
     @DOpt(type = DOpt.Type.RequiredConstructor)
-    public RoomService(@AttrRef("type") RoomServiceType type,
-                   @AttrRef("price") Long price ) {
-        this(null, type, price);
+    public RoomService(@AttrRef("price") Long price,
+                       @AttrRef("roomServiceType") RoomServiceType roomServiceType) {
+        this(null, price, roomServiceType);
     }
 
     @DOpt(type = DOpt.Type.DataSourceConstructor)
-    public RoomService(@AttrRef("id") Integer id, @AttrRef("type") RoomServiceType type,
-                   @AttrRef("price") Long price) {
+    public RoomService(@AttrRef("id") Integer id,
+                       @AttrRef("price") Long price,
+                       @AttrRef("roomServiceType") RoomServiceType roomServiceType) {
         super(id, price);
-        setType(type);
+        setRoomServiceType(roomServiceType);
 
         roomServiceOrders = new ArrayList<>();
         orderCount = 0;
@@ -59,12 +59,12 @@ public class RoomService extends Service {
         return false;
     }
 
-    public RoomServiceType getType() {
-        return type;
+    public RoomServiceType getRoomServiceType() {
+        return roomServiceType;
     }
 
-    public void setType(RoomServiceType type) {
-        this.type = type;
+    public void setRoomServiceType(RoomServiceType roomServiceType) {
+        this.roomServiceType = roomServiceType;
     }
 
     @DOpt(type=DOpt.Type.LinkAdderNew)

@@ -30,14 +30,15 @@ public class RestaurantService extends Service {
 
 
     @DOpt(type = DOpt.Type.ObjectFormConstructor)
-    public RestaurantService(@AttrRef("dishName") String dishName,
-                             @AttrRef("price") Long price) {
-        this(null, dishName, price);
+    public RestaurantService(@AttrRef("price") Long price,
+                             @AttrRef("dishName") String dishName) {
+        this(null, price, dishName);
     }
 
     @DOpt(type = DOpt.Type.DataSourceConstructor)
-    public RestaurantService(@AttrRef("id") Integer id, @AttrRef("dishName") String dishName,
-                             @AttrRef("price") Long price) {
+    public RestaurantService(@AttrRef("id") Integer id,
+                             @AttrRef("price") Long price,
+                             @AttrRef("dishName") String dishName) {
         super(id, price);
         this.dishName = dishName;
 
