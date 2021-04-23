@@ -10,7 +10,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/dev/school/SS2/domainapptool_20201217_5.4 (1)/domainapptool.jar!/" />
+          <root url="jar://$MODULE_DIR$/../SS2/domainapptool_20201217_5.4 (1)/domainapptool.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -19,7 +19,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/dev/school/SS2/domainapptool_20201217_5.4 (1)/memorybasedjavacompiler.jar!/" />
+          <root url="jar://$MODULE_DIR$/../SS2/domainapptool_20201217_5.4 (1)/memorybasedjavacompiler.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -28,7 +28,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/dev/school/SS2/domainapptool_20201217_5.4 (1)/derby.jar!/" />
+          <root url="jar://$MODULE_DIR$/../SS2/domainapptool_20201217_5.4 (1)/derby.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -37,11 +37,12 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/dev/school/SS2/domainapptool_20201217_5.4 (1)/scrollabledesktop.jar!/" />
+          <root url="jar://$MODULE_DIR$/../SS2/domainapptool_20201217_5.4 (1)/scrollabledesktop.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="derby" level="project" />
   </component>
 </module>

@@ -1,11 +1,11 @@
 ----------------------------------------------------------------
-Fri Apr 23 09:11:25 ICT 2021:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.8.3.0 - (1405108): instance a816c00e-0178-fc7f-00bb-000006c42980 
-on database directory /home/minh/HotelManagement/data/domainds  with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@659e0bfd 
-Loaded from file:/home/minh/dev/school/SS2/domainapptool_20201217_5.4%20(1)/derby.jar
+Fri Apr 23 09:42:51 ICT 2021:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.8.3.0 - (1405108): instance a816c00e-0178-fc9b-c97d-000006cbbbc0 
+on database directory /home/duong/dev/school/SS207-G6-HotelManagement/data/domainds  with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@659e0bfd 
+Loaded from file:/home/duong/dev/school/SS207-G6-HotelManagement/lib/derby.jar
 java.vendor=Oracle Corporation
 java.runtime.version=15.0.2+7-27
-user.dir=/home/minh/HotelManagement
+user.dir=/home/duong/dev/school/SS207-G6-HotelManagement
 os.name=Linux
 os.arch=amd64
 os.version=4.19.0-16-amd64

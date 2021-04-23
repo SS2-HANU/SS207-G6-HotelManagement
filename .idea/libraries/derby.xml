@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="derby">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/derby.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/domainapptool.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/memorybasedjavacompiler.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/scrollabledesktop.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

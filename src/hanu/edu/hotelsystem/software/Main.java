@@ -72,7 +72,7 @@ public class Main {
 
         DomSoftware sw;
 
-        sw = SoftwareFactory.createDefaultDomSoftware();
+        sw = SoftwareFactory.createUIDomSoftware();
         sw.init();
 
         deleteDomainModel(sw);
@@ -94,7 +94,7 @@ public class Main {
         createRestaurantService(sw);
 
         // 2. create UI software
-        sw = SoftwareFactory.createUIDomSoftware();
+//        sw = SoftwareFactory.();
 
         // 3. run
         // create in memory configuration
