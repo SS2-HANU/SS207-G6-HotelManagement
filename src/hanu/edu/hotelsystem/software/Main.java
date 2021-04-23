@@ -19,6 +19,7 @@ import hanu.edu.hotelsystem.services.Room.model.RoomType;
 import hanu.edu.hotelsystem.services.RoomOrder.model.RoomOrder;
 import hanu.edu.hotelsystem.services.Service.model.RestaurantService.RestaurantService;
 import hanu.edu.hotelsystem.services.Service.model.RoomService.RoomServiceType;
+import hanu.edu.hotelsystem.services.Service.model.RoomService.RoomService;
 import hanu.edu.hotelsystem.services.Service.model.Service;
 import hanu.edu.hotelsystem.services.Service.model.SpaService.Duration;
 import hanu.edu.hotelsystem.services.Service.model.SpaService.SpaService;
@@ -87,8 +88,8 @@ public class Main {
         createEmployee(sw);
         createRoom(sw);
 
-//        createSpaService(sw);
-//        createRoomService(sw);
+        createSpaService(sw);
+        createRoomService(sw);
         createTransportationService(sw);
         createRestaurantService(sw);
 
@@ -123,17 +124,17 @@ public class Main {
     }
 
     private static void createAddress(DomSoftware sw) throws DataSourceException {
-        Address address1 = new Address("Thai Binh");
+        Address address1 = new Address("VietNam", "Thai Binh", "TP Thai Binh", "112A");
         sw.addObject(Address.class, address1);
 
-        Address address2 = new Address("Ha Noi");
+        Address address2 = new Address("VietNam", "Ha Noi", "Dong Da", "Thai Thinh");
         sw.addObject(Address.class, address2);
 
-        Address address3 = new Address("Ho Chi Minh");
-        sw.addObject(Address.class, address3);
-
-        Address address4 = new Address("Da Nang");
-        sw.addObject(Address.class, address4);
+//        Address address3 = new Address("Ho Chi Minh");
+//        sw.addObject(Address.class, address3);
+//
+//        Address address4 = new Address("Da Nang");
+//        sw.addObject(Address.class, address4);
     }
 
     private static void createCustomer(DomSoftware sw) throws DataSourceException {

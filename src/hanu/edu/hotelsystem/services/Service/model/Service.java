@@ -18,16 +18,24 @@ public abstract class Service {
     @DAttr(name = "price", type = DAttr.Type.Long, optional = false)
     private Long price;
 
+    @DAttr(name = "averageRating", type = DAttr.Type.Double, auto = true, mutable = false)
+    public double averageRating;
+
     @DOpt(type = DOpt.Type.ObjectFormConstructor)
     public Service(@AttrRef("price") Long price ) {
-        this(null, price);
+        this(null, price, 0D);
     }
 
     @DOpt(type = DOpt.Type.DataSourceConstructor)
     public Service(@AttrRef("id") Integer id,
-                   @AttrRef("price") Long price) {
+                   @AttrRef("price") Long price,
+                   @AttrRef("averageRating") Double averageRating
+    ) {
         this.id = nextID(id);
         this.price = price;
+
+        averageRating = 0D;
+
     }
 
     public int getId() {
@@ -42,6 +50,10 @@ public abstract class Service {
         this.price = price;
     }
 
+    public double getAverageRating() {
+        return averageRating;
+    }
+
     private static int nextID(Integer currID) {
         if (currID == null) {
             idCounter++;
@@ -54,6 +66,18 @@ public abstract class Service {
             return currID;
         }
     }
+
+    //    @DOpt(type = DOpt.Type.DerivedAttributeUpdater)
+    //    @AttrRef(value = A_name)
+    //    private String nextName(Duration duration) {
+    //        return duration.getName();
+    //    }
+    //
+    //    public String getName() {
+    //        return name;
+    //    }
+
+    public abstract Double computeAverageMark();
 
     @Override
     public boolean equals(Object o) {

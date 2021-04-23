@@ -7,6 +7,7 @@ import domainapp.basics.model.meta.DAttr;
 import domainapp.basics.model.meta.DClass;
 import domainapp.basics.model.meta.DOpt;
 import domainapp.basics.model.meta.Select;
+import hanu.edu.hotelsystem.services.Assignment.model.Assignment;
 import hanu.edu.hotelsystem.services.Service.model.Service;
 import hanu.edu.hotelsystem.services.ServiceOrder.model.SpaServiceOrder;
 
@@ -15,10 +16,13 @@ import java.util.Collection;
 
 @DClass(schema = "hotelsystem")
 public class SpaService extends Service {
+    public static final String A_name = "name";
 
-
-    @DAttr(name = "duration", type = DAttr.Type.Domain, length = 30, optional = false, cid = true)
+    @DAttr(name = "duration", type = DAttr.Type.Domain, length = 30, optional = false)
     private Duration duration;
+
+//    @DAttr(name = "name", type = DAttr.Type.Domain, length = 30, optional = false, cid = true, virtual = true, auto = true, derivedFrom = {"duration"})
+//    private String name;
 
     @DAttr(name="spaServiceOrders",type= DAttr.Type.Collection,
             serialisable=false,optional=false,
@@ -30,24 +34,25 @@ public class SpaService extends Service {
     private Collection<SpaServiceOrder> spaServiceOrders;
     private int orderCount;
 
-
     @DOpt(type = DOpt.Type.ObjectFormConstructor)
     public SpaService(@AttrRef("price") Long price,
                       @AttrRef("duration") Duration duration) {
-        this(null, price, duration);
+        this(null, price, 0D, duration);
     }
 
     @DOpt(type = DOpt.Type.DataSourceConstructor)
     public SpaService(@AttrRef("id") Integer id,
-                       @AttrRef("price") Long price,
-                      @AttrRef("duration") Duration duration) throws ConstraintViolationException {
-        super(id, price);
+                      @AttrRef("price") Long price,
+                      @AttrRef("averageRating") Double averageRating,
+                      @AttrRef("duration") Duration duration
+    ) throws ConstraintViolationException {
+        super(id, price, averageRating);
         this.duration = duration;
+//        this.name = nextName(duration);
 
         spaServiceOrders = new ArrayList<>();
         orderCount = 0;
     }
-
 
     public Duration getDuration() {
         return duration;
@@ -56,6 +61,17 @@ public class SpaService extends Service {
     public void setDuration(Duration duration) {
         this.duration = duration;
     }
+
+//    @DOpt(type = DOpt.Type.DerivedAttributeUpdater)
+//    @AttrRef(value = A_name)
+//    private String nextName(Duration duration) {
+//        return duration.getName();
+//    }
+//
+//    public String getName() {
+//        return name;
+//    }
+
 
     @DOpt(type=DOpt.Type.LinkAdder)
     public boolean addSpaServiceOrder(SpaServiceOrder order) {
@@ -72,6 +88,8 @@ public class SpaService extends Service {
         spaServiceOrders.add(order);
         orderCount++;
         // no other attributes changed
+        computeAverageMark();
+
         return false;
     }
 
@@ -92,6 +110,8 @@ public class SpaService extends Service {
         this.spaServiceOrders.addAll(orders);
         orderCount += orders.size();
 
+        computeAverageMark();
+
         // no other attributes changed
         return false;
     }
@@ -102,6 +122,8 @@ public class SpaService extends Service {
 
         if (removed) {
             orderCount--;
+
+            computeAverageMark();
         }
 
         // no other attributes changed
@@ -135,4 +157,38 @@ public class SpaService extends Service {
     }
 
 
+    /**
+     * @effects
+     *  computes {@link #averageRating} of all the {@link SpaServiceOrder#getRating()} ()}s
+     *  (in {@link #spaServiceOrders}.
+     */
+    @Override
+    public Double computeAverageMark() {
+        if (orderCount > 0) {
+            double totalRating = 0d;
+            for (SpaServiceOrder s : spaServiceOrders) {
+                totalRating += s.getRating();
+            }
+            totalRating = Math.round(totalRating * 100) ;
+            averageRating = totalRating / (100 * orderCount);
+        } else {
+            averageRating = 0;
+        }
+        return averageRating;
+    }
+
+    @DOpt(type = DOpt.Type.LinkUpdater)
+    public boolean updateSpaServiceOrder(SpaServiceOrder s){
+        double totalRating = averageRating * orderCount;
+
+        int oldAverageRating = s.getRating(true);
+
+        int diff = s.getRating() - oldAverageRating;
+
+        totalRating += diff;
+
+        averageRating = totalRating / orderCount;
+
+        return true;
+    }
 }

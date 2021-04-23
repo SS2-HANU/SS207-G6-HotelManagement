@@ -6,11 +6,11 @@ import domainapp.basics.model.meta.DAssoc;
 import domainapp.basics.model.meta.DAttr;
 import domainapp.basics.model.meta.DClass;
 import domainapp.basics.model.meta.DOpt;
-import hanu.edu.hotelsystem.services.Person.model.Employee;
 import hanu.edu.hotelsystem.services.Reservation.model.Reservation;
 import hanu.edu.hotelsystem.services.Service.model.SpaService.SpaService;
 
 import java.util.Date;
+import java.util.Objects;
 
 @DClass(schema = "hotelsystem" )
 public class SpaServiceOrder extends ServiceOrder {
@@ -83,6 +83,29 @@ public class SpaServiceOrder extends ServiceOrder {
     public void setSpaService(SpaService spaService) {
         this.spaService = spaService;
         computeTotalPrice();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        SpaServiceOrder that = (SpaServiceOrder) o;
+        return Objects.equals(code, that.code);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), code);
+    }
+
+    @Override
+    public String toString() {
+        return "SpaServiceOrder{" +
+                "totalPrice=" + totalPrice +
+                ", code='" + code + '\'' +
+                ", spaService=" + spaService +
+                '}';
     }
 
     @Override

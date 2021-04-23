@@ -36,16 +36,16 @@ public class Reservation {
     private int id;
     private static int idCounter;
 
-    @DAttr(name = Attr_CreatedAt, type = DAttr.Type.Date, length = 15, optional = false, format= DAttr.Format.Date, cid = true)
+    @DAttr(name = Attr_CreatedAt, type = DAttr.Type.Date, length = 15, optional = false, format = DAttr.Format.Date)
     private Date createdAt;
 
-    @DAttr(name = Attr_StartDate, type = DAttr.Type.Date, length = 15, optional = false, format= DAttr.Format.Date)
+    @DAttr(name = Attr_StartDate, type = DAttr.Type.Date, length = 15, optional = false, format = DAttr.Format.Date)
     private Date startDate;
 
-    @DAttr(name = Attr_EndDate, type = DAttr.Type.Date, length = 15, optional = false, format= DAttr.Format.Date)
+    @DAttr(name = Attr_EndDate, type = DAttr.Type.Date, length = 15, optional = false, format = DAttr.Format.Date)
     private Date endDate;
 
-    @DAttr(name = Attr_customer, type = DAttr.Type.Domain, length = 20, optional = false, cid = true)
+    @DAttr(name = Attr_customer, type = DAttr.Type.Domain, length = 20, optional = false)
     @DAssoc(ascName = "customer-has-reservation", role = "reservation",
             ascType = DAssoc.AssocType.One2Many, endType = DAssoc.AssocEndType.Many,
             associate = @DAssoc.Associate(type = Customer.class, cardMin = 1, cardMax = 1))
@@ -86,10 +86,10 @@ public class Reservation {
     @DAttr(name = "totalPrice", type = DAttr.Type.Long, auto = true, mutable = false)
     private Long totalPrice;
 
-    @DAttr(name=rptbyStatus,type= DAttr.Type.Domain, serialisable=false,
+    @DAttr(name = rptbyStatus, type = DAttr.Type.Domain, serialisable = false,
             // IMPORTANT: set virtual=true to exclude this attribute from the object state
             // (avoiding the view having to load this attribute's value from data source)
-            virtual=true)
+            virtual = true)
     private ReservationByStatusReport reservationByStatusReport;
 
     @DOpt(type = DOpt.Type.ObjectFormConstructor)
@@ -98,7 +98,7 @@ public class Reservation {
                        @AttrRef("endDate") Date endDate,
                        @AttrRef("customer") Customer customer,
                        @AttrRef("isCancel") Boolean isCancel) {
-        this(null,createdAt, startDate, endDate, customer, isCancel,0L);
+        this(null, createdAt, startDate, endDate, customer, isCancel, 0L);
     }
 
     @DOpt(type = DOpt.Type.DataSourceConstructor)
@@ -108,7 +108,9 @@ public class Reservation {
                        @AttrRef("endDate") Date endDate,
                        @AttrRef("customer") Customer customer,
                        @AttrRef("isCancel") Boolean isCancel,
-                       @AttrRef("totalPrice") Long totalPrice) throws ConstraintViolationException {
+                       @AttrRef("totalPrice") Long totalPrice
+//                       @AttrRef("status") Status status
+    ) throws ConstraintViolationException {
         this.id = nextID(id);
         this.createdAt = createdAt;
         this.startDate = startDate;
@@ -132,7 +134,7 @@ public class Reservation {
     @AttrRef(value = AttributeName_Status)
     public void updateStatus() {
         if (startDate != null && endDate != null && isCancel != null) {
-            if(!isCancel) {
+            if (!isCancel) {
                 if (endDate.before(DToolkit.getNow())) {
                     status = Status.COMPLETED;
                 } else if (startDate.before(DToolkit.getNow()) && endDate.after(DToolkit.getNow())) {
@@ -327,13 +329,12 @@ public class Reservation {
         roomOrderCount = count;
     }
 
-
     private static int nextID(Integer currID) {
         if (currID == null) {
             idCounter++;
             return idCounter;
         } else {
-            int num = currID.intValue();
+            int num = currID;
             if (num > idCounter)
                 idCounter = num;
 
@@ -370,7 +371,7 @@ public class Reservation {
 
     public void setStartDate(Date startDate, boolean updateStatus) {
         this.startDate = startDate;
-        if(updateStatus)
+        if (updateStatus)
             updateStatus();
     }
 
@@ -379,7 +380,7 @@ public class Reservation {
     }
 
     public void setEndDate(Date endDate) {
-        if (endDate.before(DToolkit.MIN_DATE) || endDate.before(startDate))  {
+        if (endDate.before(DToolkit.MIN_DATE) || endDate.before(startDate)) {
             throw new ConstraintViolationException(DExCode.INVALID_END_DATE, endDate);
         }
         this.endDate = endDate;
@@ -388,7 +389,7 @@ public class Reservation {
 
     public void setEndDate(Date endDate, boolean updateStatus) {
         this.endDate = endDate;
-        if(updateStatus)
+        if (updateStatus)
             updateStatus();
     }
 
@@ -399,7 +400,7 @@ public class Reservation {
 
     public void setIsCancel(Boolean cancel, boolean updateStatus) {
         isCancel = cancel;
-        if(updateStatus)
+        if (updateStatus)
             updateStatus();
     }
 
@@ -416,19 +417,19 @@ public class Reservation {
     }
 
     /**
-     * @effects
-     *  computes {@link #totalPrice} of all the {@link ServiceOrder#getTotalPrice()}s
-     *  (in {@link #serviceOrders}.
+     * @effects computes {@link #totalPrice} of all the {@link ServiceOrder#getTotalPrice()}s
+     * (in {@link #serviceOrders}.
      */
 
-    private void computeTotalPrice(){
-        if(serviceOrderCount > 0){
-            for(ServiceOrder s: serviceOrders){
+    private void computeTotalPrice() {
+        totalPrice = 0L;
+        if (serviceOrderCount > 0) {
+            for (ServiceOrder s : serviceOrders) {
                 totalPrice += s.getTotalPrice();
             }
-        } else
-            totalPrice = 0L;
+        }
     }
+
 
     public Long getTotalPrice() {
         return totalPrice;

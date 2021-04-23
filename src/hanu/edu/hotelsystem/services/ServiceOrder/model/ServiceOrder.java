@@ -8,6 +8,7 @@ import domainapp.basics.model.meta.DClass;
 import domainapp.basics.model.meta.DOpt;
 import domainapp.basics.model.meta.Select;
 import domainapp.basics.util.cache.StateHistory;
+import hanu.edu.hotelsystem.exceptions.DExCode;
 import hanu.edu.hotelsystem.services.Assignment.model.Assignment;
 import hanu.edu.hotelsystem.services.Reservation.model.Reservation;
 import hanu.edu.hotelsystem.services.Person.model.Employee;
@@ -63,7 +64,6 @@ public abstract class ServiceOrder {
     private Collection<Assignment> assignments;
     private int assignmentCount;
 
-
     @DOpt(type=DOpt.Type.ObjectFormConstructor)
     public ServiceOrder(@AttrRef("createdAt") Date createdAt,
                         @AttrRef("quantity") Integer quantity,
@@ -82,11 +82,12 @@ public abstract class ServiceOrder {
     ) throws ConstraintViolationException {
         this.id = nextId(id);
         this.quantity = quantity;
-        this.createdAt = createdAt;
 
         totalPrice = 0L;
 
         this.reservation= reservation;
+        setCreatedAt(createdAt);
+
         this.rating = rating;
 
         assignments = new ArrayList<>();
@@ -115,6 +116,10 @@ public abstract class ServiceOrder {
     }
 
     public void setCreatedAt(Date createdAt) {
+
+        if (createdAt.before(this.reservation.getStartDate()) || createdAt.after(this.reservation.getEndDate())) {
+            throw new ConstraintViolationException(DExCode.INVALID_CREATED_SERVICE_ORDER_DATE, createdAt);
+        }
         this.createdAt = createdAt;
     }
 
@@ -124,6 +129,8 @@ public abstract class ServiceOrder {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+
+        computeTotalPrice();
     }
 
     public Reservation getReservation() {
@@ -164,9 +171,9 @@ public abstract class ServiceOrder {
     }
 
     @DOpt(type=DOpt.Type.LinkAdder)
-    public boolean addAssignment(Assignment order) {
-        if (!this.assignments.contains(order)) {
-            assignments.add(order);
+    public boolean addAssignment(Assignment assignment) {
+        if (!this.assignments.contains(assignment)) {
+            assignments.add(assignment);
         }
 
         // no other attributes changed
@@ -174,18 +181,18 @@ public abstract class ServiceOrder {
     }
 
     @DOpt(type=DOpt.Type.LinkAdderNew)
-    public boolean addNewAssignment(Assignment order) {
-        assignments.add(order);
+    public boolean addNewAssignment(Assignment assignment) {
+        assignments.add(assignment);
         assignmentCount++;
         // no other attributes changed
         return false;
     }
 
     @DOpt(type=DOpt.Type.LinkAdder)
-    public boolean addAssignments(Collection<Assignment> orders) {
-        for (Assignment o : orders) {
-            if (!this.assignments.contains(o)) {
-                this.assignments.add(o);
+    public boolean addAssignments(Collection<Assignment> assignments) {
+        for (Assignment assignment : assignments) {
+            if (!this.assignments.contains(assignment)) {
+                this.assignments.add(assignment);
             }
         }
 
@@ -194,9 +201,9 @@ public abstract class ServiceOrder {
     }
 
     @DOpt(type=DOpt.Type.LinkAdderNew)
-    public boolean addNewAssignments(Collection<Assignment> orders) {
-        this.assignments.addAll(orders);
-        assignmentCount += orders.size();
+    public boolean addNewAssignments(Collection<Assignment> assignments) {
+        this.assignments.addAll(assignments);
+        assignmentCount += assignments.size();
 
         // no other attributes changed
         return false;
@@ -204,8 +211,8 @@ public abstract class ServiceOrder {
 
     @DOpt(type=DOpt.Type.LinkRemover)
     //only need to do this for reflexive association: @MemberRef(name="students")
-    public boolean removeAssignment(Assignment o) {
-        boolean removed = assignments.remove(o);
+    public boolean removeAssignment(Assignment assignment) {
+        boolean removed = assignments.remove(assignment);
 
         if (removed) {
             assignmentCount--;
@@ -216,10 +223,10 @@ public abstract class ServiceOrder {
     }
 
     @DOpt(type=DOpt.Type.Setter)
-    public void setAssignments(Collection<Assignment> orders) {
-        this.assignments = orders;
+    public void setAssignments(Collection<Assignment> assignments) {
+        this.assignments = assignments;
 
-        assignmentCount = orders.size();
+        assignmentCount = assignments.size();
     }
 
     @DOpt(type=DOpt.Type.Getter)

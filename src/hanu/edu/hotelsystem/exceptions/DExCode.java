@@ -39,7 +39,10 @@ import java.text.MessageFormat;
          * 0: created date
          */
         INVALID_CREATED_DATE("Created date is not a valid date"),
-
+        /**
+         * 0: created service order date
+         */
+        INVALID_CREATED_SERVICE_ORDER_DATE("Created date must be from start date to end date of reservation"),
         /**
          * 0: start date
          */

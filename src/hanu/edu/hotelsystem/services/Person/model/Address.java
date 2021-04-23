@@ -25,39 +25,53 @@ public class Address {
     private int id;
     private static int idCounter;
 
-    @DAttr(name="name",type= DAttr.Type.String,length=20,optional=false, cid = true)
-    private String name;
+    @DAttr(name="country",type= DAttr.Type.String,length=20,optional=false)
+    private String country;
 
-    @DAttr(name="person",type= DAttr.Type.Domain,serialisable=false)
-    @DAssoc(ascName="person-has-address",role="address",
-            ascType= DAssoc.AssocType.One2One, endType= DAssoc.AssocEndType.One,
-            associate=@DAssoc.Associate(type= Person.class,cardMin=1,cardMax=1,determinant=true))
-    private Person person;
+    @DAttr(name="province",type= DAttr.Type.String,length=20,optional=false, cid = true)
+    private String province;
+
+    @DAttr(name="district",type= DAttr.Type.String,length=20,optional=false)
+    private String district;
+
+    @DAttr(name="detailAddress",type= DAttr.Type.String,length=20,optional=false)
+    private String detailAddress;
+
+//    @DAttr(name="person",type= DAttr.Type.Domain,serialisable=false)
+//    @DAssoc(ascName="person-has-address",role="address",
+//            ascType= DAssoc.AssocType.One2One, endType= DAssoc.AssocEndType.One,
+//            associate=@DAssoc.Associate(type= Person.class,cardMin=1,cardMax=1,determinant=true))
+//    private Person person;
 
     // from object form: Student is not included
     @DOpt(type=DOpt.Type.ObjectFormConstructor)
     @DOpt(type=DOpt.Type.RequiredConstructor)
-    public Address(@AttrRef("name") String cityName) {
-        this(null, cityName, null);
+    public Address(@AttrRef("country") String country,
+                   @AttrRef("province") String province,
+                   @AttrRef("district") String district,
+                   @AttrRef("detailAddress") String detailAddress) {
+        this(null, country, province, district, detailAddress);
     }
-
-    // from object form: Student is included
-    @DOpt(type=DOpt.Type.ObjectFormConstructor)
-    public Address(@AttrRef("name") String cityName, @AttrRef("person") Person person) {
-        this(null, cityName, person);
-    }
+    
 
     // from data source
     @DOpt(type=DOpt.Type.DataSourceConstructor)
-    public Address(@AttrRef("id") Integer id, @AttrRef("name") String cityName) {
-        this(id, cityName, null);
-    }
+//    public Address(@AttrRef("id") Integer id, @AttrRef("name") String province) {
+//        this(id, province);
+//    }
 
     // based constructor (used by others)
-    private Address(Integer id, String cityName, Person person) {
+    public Address(@AttrRef("id") Integer id,
+                    @AttrRef("country") String country,
+                    @AttrRef("province") String province,
+                    @AttrRef("district") String district,
+                    @AttrRef("detailAddress") String detailAddress
+                    ) {
         this.id = nextId(id);
-        this.name = cityName;
-        this.person = person;
+        this.country = country;
+        this.province = province;
+        this.district = district;
+        this.detailAddress = detailAddress;
     }
 
     private static int nextId(Integer currID) {
@@ -98,31 +112,49 @@ public class Address {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public String getCountry() {
+        return country;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCountry(String country) {
+        this.country = country;
     }
 
-    public Person getPerson() {
-        return person;
+    public String getProvince() {
+        return province;
     }
 
-    @DOpt(type=DOpt.Type.LinkAdderNew)
-    public void setNewPerson(Person person) {
-        this.person = person;
-        // do other updates here (if needed)
+    public void setProvince(String province) {
+        this.province = province;
     }
 
-    public void setPerson(Person person) {
-        this.person = person;
+    public String getDistrict() {
+        return district;
     }
 
-    @Override
-    public String toString() {
-        return name;
+    public void setDistrict(String district) {
+        this.district = district;
     }
+
+    public String getDetailAddress() {
+        return detailAddress;
+    }
+
+    public void setDetailAddress(String detailAddress) {
+        this.detailAddress = detailAddress;
+    }
+    //    public Person getPerson() {
+//        return person;
+//    }
+//
+//    @DOpt(type=DOpt.Type.LinkAdderNew)
+//    public void setNewPerson(Person person) {
+//        this.person = person;
+//        // do other updates here (if needed)
+//    }
+//
+//    public void setPerson(Person person) {
+//        this.person = person;
+//    }
 }
 

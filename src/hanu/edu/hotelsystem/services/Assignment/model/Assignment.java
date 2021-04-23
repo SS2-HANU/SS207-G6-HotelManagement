@@ -110,7 +110,7 @@ public class Assignment {
         }
     }
 
-    public void setEmployeeRating(int employeeRating) {
+    public void setEmployeeRating(Integer employeeRating) {
         this.employeeRating = employeeRating;
     }
 

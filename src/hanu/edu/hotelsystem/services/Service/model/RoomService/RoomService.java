@@ -9,6 +9,8 @@ import domainapp.basics.model.meta.DOpt;
 import domainapp.basics.model.meta.Select;
 import hanu.edu.hotelsystem.services.Service.model.Service;
 import hanu.edu.hotelsystem.services.ServiceOrder.model.RoomServiceOrder;
+import hanu.edu.hotelsystem.services.ServiceOrder.model.SpaServiceOrder;
+import hanu.edu.hotelsystem.services.ServiceOrder.model.TransportationServiceOrder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,7 +18,7 @@ import java.util.Collection;
 @DClass(schema = "hotelsystem")
 public class RoomService extends Service {
 
-    @DAttr(name = "roomServiceType", type = DAttr.Type.Domain, length = 15, optional = false, cid = true)
+    @DAttr(name = "roomServiceType", type = DAttr.Type.Domain, length = 15, optional = false)
     private RoomServiceType roomServiceType;
 
     @DAttr(name="roomServiceOrders",type= DAttr.Type.Collection,
@@ -35,18 +37,61 @@ public class RoomService extends Service {
     @DOpt(type = DOpt.Type.RequiredConstructor)
     public RoomService(@AttrRef("price") Long price,
                        @AttrRef("roomServiceType") RoomServiceType roomServiceType) {
-        this(null, price, roomServiceType);
+        this(null, price, 0D, roomServiceType);
     }
 
     @DOpt(type = DOpt.Type.DataSourceConstructor)
     public RoomService(@AttrRef("id") Integer id,
                        @AttrRef("price") Long price,
+                       @AttrRef("averageRating") Double averageRating,
                        @AttrRef("roomServiceType") RoomServiceType roomServiceType) {
-        super(id, price);
+        super(id, price, averageRating);
         setRoomServiceType(roomServiceType);
 
         roomServiceOrders = new ArrayList<>();
         orderCount = 0;
+    }
+
+    /**
+     * @effects
+     *  computes {@link #averageRating} of all the {@link TransportationServiceOrder#getRating()} ()}s
+     *  (in {@link #roomServiceOrders}.
+     */
+    @Override
+    public Double computeAverageMark() {
+        if (orderCount > 0) {
+            double totalRating = 0d;
+            for ( RoomServiceOrder r : roomServiceOrders) {
+                totalRating += r.getRating();
+            }
+            totalRating = Math.round(totalRating * 100) ;
+            averageRating = totalRating / (100 * orderCount);
+        } else {
+            averageRating = 0;
+        }
+        return averageRating;
+    }
+
+    @DOpt(type = DOpt.Type.LinkUpdater)
+    public boolean updateRoomServiceOrder(RoomServiceOrder r){
+        double totalRating = averageRating * orderCount;
+
+        int oldAverageRating = r.getRating(true);
+
+        int diff = r.getRating() - oldAverageRating;
+
+        totalRating += diff;
+
+        averageRating = totalRating / orderCount;
+
+        return true;
+    }
+    public RoomServiceType getRoomServiceType() {
+        return roomServiceType;
+    }
+
+    public void setRoomServiceType(RoomServiceType roomServiceType) {
+        this.roomServiceType = roomServiceType;
     }
 
     @DOpt(type=DOpt.Type.LinkAdder)
@@ -57,14 +102,6 @@ public class RoomService extends Service {
 
         // no other attributes changed
         return false;
-    }
-
-    public RoomServiceType getRoomServiceType() {
-        return roomServiceType;
-    }
-
-    public void setRoomServiceType(RoomServiceType roomServiceType) {
-        this.roomServiceType = roomServiceType;
     }
 
     @DOpt(type=DOpt.Type.LinkAdderNew)

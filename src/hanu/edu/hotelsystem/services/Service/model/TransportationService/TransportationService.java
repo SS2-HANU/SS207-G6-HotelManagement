@@ -7,6 +7,7 @@ import domainapp.basics.model.meta.DClass;
 import domainapp.basics.model.meta.DOpt;
 import domainapp.basics.model.meta.Select;
 import hanu.edu.hotelsystem.services.Service.model.Service;
+import hanu.edu.hotelsystem.services.ServiceOrder.model.SpaServiceOrder;
 import hanu.edu.hotelsystem.services.ServiceOrder.model.TransportationServiceOrder;
 
 import java.util.ArrayList;
@@ -36,14 +37,15 @@ public class TransportationService extends Service {
     @DOpt(type = DOpt.Type.ObjectFormConstructor)
     public TransportationService(@AttrRef("price") Long price,
                                  @AttrRef("vehicle") String vehicle) {
-        this(null, price, vehicle);
+        this(null, price,0D, vehicle);
     }
 
     @DOpt(type = DOpt.Type.DataSourceConstructor)
     public TransportationService(@AttrRef("id") Integer id,
                                  @AttrRef("price") Long price,
+                                 @AttrRef("averageRating") Double averageRating,
                                  @AttrRef("vehicle") String vehicle) {
-        super(id, price);
+        super(id, price, averageRating);
         this.vehicle = vehicle;
 
         transportationServiceOrders = new ArrayList<>();
@@ -57,6 +59,41 @@ public class TransportationService extends Service {
 
     public void setVehicle(String vehicle) {
         this.vehicle = vehicle;
+    }
+
+    /**
+     * @effects
+     *  computes {@link #averageRating} of all the {@link TransportationServiceOrder#getRating()} ()}s
+     *  (in {@link #transportationServiceOrders}.
+     */
+    @Override
+    public Double computeAverageMark() {
+        if (orderCount > 0) {
+            double totalRating = 0d;
+            for (TransportationServiceOrder t : transportationServiceOrders) {
+                totalRating += t.getRating();
+            }
+            totalRating = Math.round(totalRating * 100) ;
+            averageRating = totalRating / (100 * orderCount);
+        } else {
+            averageRating = 0;
+        }
+        return averageRating;
+    }
+
+    @DOpt(type = DOpt.Type.LinkUpdater)
+    public boolean updateTransportationServiceOrder(TransportationServiceOrder t){
+        double totalRating = averageRating * orderCount;
+
+        int oldAverageRating = t.getRating(true);
+
+        int diff = t.getRating() - oldAverageRating;
+
+        totalRating += diff;
+
+        averageRating = totalRating / orderCount;
+
+        return true;
     }
 
     @DOpt(type=DOpt.Type.LinkAdder)
@@ -74,6 +111,8 @@ public class TransportationService extends Service {
         transportationServiceOrders.add(order);
         orderCount++;
         // no other attributes changed
+        computeAverageMark();
+
         return false;
     }
 
@@ -94,6 +133,8 @@ public class TransportationService extends Service {
         this.transportationServiceOrders.addAll(orders);
         orderCount += orders.size();
 
+        computeAverageMark();
+
         // no other attributes changed
         return false;
     }
@@ -104,6 +145,7 @@ public class TransportationService extends Service {
 
         if (removed) {
             orderCount--;
+            computeAverageMark();
         }
 
         // no other attributes changed

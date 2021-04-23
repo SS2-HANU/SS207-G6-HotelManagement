@@ -6,6 +6,7 @@ import domainapp.basics.model.meta.DAssoc;
 import domainapp.basics.model.meta.DAttr;
 import domainapp.basics.model.meta.DClass;
 import domainapp.basics.model.meta.DOpt;
+import domainapp.basics.util.cache.StateHistory;
 import hanu.edu.hotelsystem.services.Delivery.model.Delivery;
 import hanu.edu.hotelsystem.services.Person.model.Customer;
 import hanu.edu.hotelsystem.services.Service.model.RestaurantService.RestaurantService;
@@ -15,6 +16,7 @@ import java.util.Objects;
 
 @DClass(schema = "hotelsystem" )
 public class RestaurantServiceOrder {
+    public static final String Attr_rating = "rating";
 
     @DAttr(name = "id", id = true, auto = true, length = 6, mutable = false, type = DAttr.Type.Integer)
     private int id;
@@ -44,6 +46,11 @@ public class RestaurantServiceOrder {
     @DAttr(name = "quantity", type = DAttr.Type.Integer, optional = false, min = 1, max = 10)
     private Integer quantity;
 
+    @DAttr(name = Attr_rating, type = DAttr.Type.Integer, optional = false, min = 1, max = 10)
+    private Integer rating;
+
+    private StateHistory<String, Object> stateHist;
+
     @DAttr(name = "totalPrice", type = DAttr.Type.Long, optional = false)
     private Long totalPrice;
 
@@ -53,8 +60,9 @@ public class RestaurantServiceOrder {
                                   @AttrRef("restaurantService") RestaurantService restaurantService,
                                   @AttrRef("quantity") Integer quantity,
                                   @AttrRef("delivery") Delivery delivery,
+                                  @AttrRef("rating") Integer rating,
                                   @AttrRef("totalPrice") Long totalPrice){
-        this(null, customer,createdAt, restaurantService, quantity,delivery,totalPrice);
+        this(null, customer,createdAt, restaurantService, quantity,delivery, rating, totalPrice);
 
     }
     @DOpt(type = DOpt.Type.DataSourceConstructor)
@@ -64,6 +72,7 @@ public class RestaurantServiceOrder {
                                   @AttrRef("restaurantService") RestaurantService restaurantService,
                                   @AttrRef("quantity") Integer quantity,
                                   @AttrRef("delivery") Delivery delivery,
+                                  @AttrRef("rating") Integer rating,
                                   @AttrRef("totalPrice") Long totalPrice)
             throws ConstraintViolationException {
         this.id = nextID(id);
@@ -72,6 +81,7 @@ public class RestaurantServiceOrder {
         this.restaurantService = restaurantService;
         this.quantity = quantity;
         this.delivery = delivery;
+        this.rating = rating;
         this.totalPrice = totalPrice;
     }
 
@@ -130,6 +140,31 @@ public class RestaurantServiceOrder {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    public Integer getRating() {
+        return getRating(false);
+    }
+
+    public Integer getRating(boolean cached) {
+        if (cached) {
+            Object val = stateHist.get(Attr_rating);
+
+            if (val == null)
+                throw new IllegalStateException(
+                        "ServiceOrder.getRating: cached value is null");
+
+            return (Integer) val;
+        } else {
+            if (rating != null)
+                return rating;
+            else
+                return 0;
+        }
+    }
+
+    public void setRating(Integer rating) {
+        this.rating = rating;
     }
 
     public Long getTotalPrice() {

@@ -8,6 +8,7 @@ import domainapp.basics.model.meta.DOpt;
 import domainapp.basics.model.meta.Select;
 import hanu.edu.hotelsystem.services.Service.model.Service;
 import hanu.edu.hotelsystem.services.ServiceOrder.model.RestaurantServiceOrder;
+import hanu.edu.hotelsystem.services.ServiceOrder.model.TransportationServiceOrder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,18 +33,57 @@ public class RestaurantService extends Service {
     @DOpt(type = DOpt.Type.ObjectFormConstructor)
     public RestaurantService(@AttrRef("price") Long price,
                              @AttrRef("dishName") String dishName) {
-        this(null, price, dishName);
+        this(null, price, 0D, dishName);
     }
 
     @DOpt(type = DOpt.Type.DataSourceConstructor)
     public RestaurantService(@AttrRef("id") Integer id,
                              @AttrRef("price") Long price,
+                             @AttrRef("averageRating") Double averageRating,
                              @AttrRef("dishName") String dishName) {
-        super(id, price);
+        super(id, price, averageRating);
         this.dishName = dishName;
 
         restaurantServiceOrders = new ArrayList<>();
         orderCount = 0;
+
+        averageRating = 0D;
+
+    }
+
+    /**
+     * @effects
+     *  computes {@link #averageRating} of all the {@link RestaurantServiceOrder#getRating()} ()}s
+     *  (in {@link #restaurantServiceOrders}.
+     */
+    @Override
+    public Double computeAverageMark() {
+        if (orderCount > 0) {
+            double totalRating = 0d;
+            for (RestaurantServiceOrder t : restaurantServiceOrders) {
+                totalRating += t.getRating();
+            }
+            totalRating = Math.round(totalRating * 100) ;
+            averageRating = totalRating / (100 * orderCount);
+        } else {
+            averageRating = 0;
+        }
+        return averageRating;
+    }
+
+    @DOpt(type = DOpt.Type.LinkUpdater)
+    public boolean updateRestaurantServiceOrder(RestaurantServiceOrder r){
+        double totalRating = averageRating * orderCount;
+
+        int oldAverageRating = r.getRating(true);
+
+        int diff = r.getRating() - oldAverageRating;
+
+        totalRating += diff;
+
+        averageRating = totalRating / orderCount;
+
+        return true;
     }
 
     @DOpt(type = DOpt.Type.LinkAdder)
@@ -61,6 +101,7 @@ public class RestaurantService extends Service {
         restaurantServiceOrders.add(order);
         orderCount++;
         // no other attributes changed
+        computeAverageMark();
         return false;
     }
 
@@ -81,6 +122,7 @@ public class RestaurantService extends Service {
         this.restaurantServiceOrders.addAll(orders);
         orderCount += orders.size();
 
+        computeAverageMark();
         // no other attributes changed
         return false;
     }
@@ -92,6 +134,7 @@ public class RestaurantService extends Service {
 
         if (removed) {
             orderCount--;
+            computeAverageMark();
         }
 
         // no other attributes changed

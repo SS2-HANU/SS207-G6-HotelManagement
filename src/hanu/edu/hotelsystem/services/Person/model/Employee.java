@@ -204,15 +204,15 @@ public class Employee extends Person {
     @DOpt(type = DOpt.Type.LinkUpdater)
     public boolean updateAssignment(Assignment a){
         double totalRating = averageRating * assignmentCount;
-
+        System.out.println(totalRating);
         int oldAverageRating = a.getEmployeeRating(true);
-
+        System.out.println(oldAverageRating);
         int diff = a.getEmployeeRating() - oldAverageRating;
-
+        System.out.println(diff);
         totalRating += diff;
-
+        System.out.println(totalRating);
         averageRating = totalRating / assignmentCount;
-
+        System.out.println(averageRating);
         return true;
     }
 

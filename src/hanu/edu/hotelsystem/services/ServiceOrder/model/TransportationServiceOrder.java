@@ -6,11 +6,13 @@ import domainapp.basics.model.meta.DAssoc;
 import domainapp.basics.model.meta.DAttr;
 import domainapp.basics.model.meta.DClass;
 import domainapp.basics.model.meta.DOpt;
+import hanu.edu.hotelsystem.services.Person.model.Address;
 import hanu.edu.hotelsystem.services.Person.model.Employee;
 import hanu.edu.hotelsystem.services.Reservation.model.Reservation;
 import hanu.edu.hotelsystem.services.Service.model.TransportationService.TransportationService;
 
 import java.util.Date;
+import java.util.Objects;
 
 @DClass(schema = "hotelsystem" )
 public class TransportationServiceOrder extends ServiceOrder{
@@ -27,6 +29,12 @@ public class TransportationServiceOrder extends ServiceOrder{
             associate=@DAssoc.Associate(type= TransportationService.class,cardMin=1,cardMax=1))
     private TransportationService transportationService;
 
+    @DAttr(name = "address", type = DAttr.Type.Domain, length = 20, optional = false)
+    @DAssoc(ascName = "person-has-address", role = "person",
+            ascType = DAssoc.AssocType.One2One, endType = DAssoc.AssocEndType.One,
+            associate = @DAssoc.Associate(type = Address.class, cardMin = 1, cardMax = 1))
+    private Address address;
+
     @DAttr(name = "distance", type = DAttr.Type.Integer, optional = false, min = 1)
     private Integer distance;
 
@@ -36,8 +44,9 @@ public class TransportationServiceOrder extends ServiceOrder{
                                       @AttrRef("reservation") Reservation reservation,
                                       @AttrRef("rating") Integer rating,
                                       @AttrRef("transportationService") TransportationService transportationService,
+                                      @AttrRef("address") Address address,
                                       @AttrRef("distance") Integer distance){
-        this(createdAt, quantity, 0L, reservation, rating, transportationService, distance, null);
+        this(createdAt, quantity, 0L, reservation, rating, transportationService,address, distance, null);
     }
 
     @DOpt(type=DOpt.Type.DataSourceConstructor)
@@ -47,12 +56,14 @@ public class TransportationServiceOrder extends ServiceOrder{
                                       @AttrRef("reservation") Reservation reservation,
                                       @AttrRef("rating") Integer rating,
                                       @AttrRef("transportationService") TransportationService transportationService,
+                                      @AttrRef("address") Address address,
                                       @AttrRef("distance") Integer distance,
                                       @AttrRef("code") String code
     ) throws ConstraintViolationException {
         super(createdAt, quantity, reservation,rating);
         this.code = nextCode(code);
         this.transportationService = transportationService;
+        this.address = address;
         this.distance = distance;
 
         computeTotalPrice();
@@ -90,6 +101,14 @@ public class TransportationServiceOrder extends ServiceOrder{
         computeTotalPrice();
     }
 
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
     public Integer getDistance() {
         return distance;
     }
@@ -98,7 +117,29 @@ public class TransportationServiceOrder extends ServiceOrder{
         this.distance = distance;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        TransportationServiceOrder that = (TransportationServiceOrder) o;
+        return Objects.equals(code, that.code);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), code);
+    }
+
+    @Override
+    public String toString() {
+        return "TransportationServiceOrder{" +
+                "totalPrice=" + totalPrice +
+                ", code='" + code + '\'' +
+                ", transportationService=" + transportationService +
+                ", distance=" + distance +
+                '}';
+    }
 
     @Override
     Long computeTotalPrice() {
